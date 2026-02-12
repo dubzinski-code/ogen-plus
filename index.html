@@ -1362,6 +1362,30 @@ function renderClassroomStatus() {
         <p class="text-slate-700 text-lg">הכיתה מונה <span class="font-bold text-indigo-600">${students.length} תלמידים</span> עם מגוון חוזקות ואתגרים.</p>
       </div>
 
+      <!-- לחצני ניווט לסעיפים נוספים -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button onclick="selectStatusSection('strengths')"
+          class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300 hover:border-emerald-400 text-center">
+          <div class="text-3xl mb-2">⭐</div>
+          <div class="font-bold text-slate-900">חוזקות בולטות</div>
+          <div class="text-xs text-emerald-700 mt-1">${Object.keys(strengths).length} חוזקות זוהו</div>
+        </button>
+        
+        <button onclick="selectStatusSection('challenges')"
+          class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-orange-50 to-amber-50 border-orange-300 hover:border-orange-400 text-center">
+          <div class="text-3xl mb-2">⚠️</div>
+          <div class="font-bold text-slate-900">אתגרים מרכזיים</div>
+          <div class="text-xs text-orange-700 mt-1">${Object.keys(challenges).length} תחומים עם אתגרים</div>
+        </button>
+        
+        <button onclick="selectStatusSection('special')"
+          class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-purple-50 to-violet-50 border-purple-300 hover:border-purple-400 text-center">
+          <div class="text-3xl mb-2">🎓</div>
+          <div class="font-bold text-slate-900">אוכלוסיות ייחודיות</div>
+          <div class="text-xs text-purple-700 mt-1">${specialPops.length} תלמידים</div>
+        </button>
+      </div>
+
       <!-- גרף עמודות -->
       <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
         <h3 class="text-xl font-bold text-slate-900 mb-4 text-center">📈 פריסת רמות לפי תחום</h3>
@@ -1390,33 +1414,6 @@ function renderClassroomStatus() {
           </div>
         </div>
       ` : ''}
-
-      <!-- לחצני ניווט לסעיפים נוספים -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-        <h3 class="text-xl font-bold text-slate-900 mb-4">📋 פירוט נוסף</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button onclick="selectStatusSection('strengths')"
-            class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300 hover:border-emerald-400 text-center">
-            <div class="text-3xl mb-2">⭐</div>
-            <div class="font-bold text-slate-900">חוזקות בולטות</div>
-            <div class="text-xs text-emerald-700 mt-1">${Object.keys(strengths).length} חוזקות זוהו</div>
-          </button>
-          
-          <button onclick="selectStatusSection('challenges')"
-            class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-orange-50 to-amber-50 border-orange-300 hover:border-orange-400 text-center">
-            <div class="text-3xl mb-2">⚠️</div>
-            <div class="font-bold text-slate-900">אתגרים מרכזיים</div>
-            <div class="text-xs text-orange-700 mt-1">${Object.keys(challenges).length} תחומים עם אתגרים</div>
-          </button>
-          
-          <button onclick="selectStatusSection('special')"
-            class="py-5 px-4 rounded-xl transition-all shadow-sm hover:shadow-lg border-2 bg-gradient-to-br from-purple-50 to-violet-50 border-purple-300 hover:border-purple-400 text-center">
-            <div class="text-3xl mb-2">🎓</div>
-            <div class="font-bold text-slate-900">אוכלוסיות ייחודיות</div>
-            <div class="text-xs text-purple-700 mt-1">${specialPops.length} תלמידים</div>
-          </button>
-        </div>
-      </div>
     </div>
   `;
 }
@@ -1598,10 +1595,10 @@ function renderTier(title, tier, recommendations, domainKey, studentsInTier) {
                       <p class="text-xs font-bold text-emerald-700 mb-2">📥 הורדת הגליון:</p>
                       <div class="flex flex-wrap gap-2">
                         <a href="${sourceLinks.he}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
-                          🇮🇱 עברית
+                          עברית
                         </a>
                         <a href="${sourceLinks.ar}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
-                          🇸🇦 ערבית
+                          ערבית
                         </a>
                       </div>
                     </div>
