@@ -23,6 +23,34 @@
 // המלצות פדגוגיות - "המוח הפדגוגי"
 // ========================================
 
+// קישורים לגליונות כלים שלובים
+const SOURCE_LINKS = {
+  'כלים שלובים - גליון 2': {
+    he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim2hiburleyedakodem.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim2hiburleyedakodemmeturgamlearavit.pdf'
+  },
+  'כלים שלובים - גליון 3': {
+    he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim3horaamevussethekerutishit.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/hekerut_gilayon_aravit.pdf'
+  },
+  'כלים שלובים - גליון 4': {
+    he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim4mashovmehuvanshonut.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim4mashovmehuvanshonutmeturgamlearavit.pdf'
+  },
+  'כלים שלובים - גליון 5': {
+    he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim5bhirakederhhayimbehoraa.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim5bhirakederehhayimbehoraameturgamlearavit.pdf'
+  },
+  'כלים שלובים - גליון 6': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/hahala-hishtalvot/Self-regulation-gilayon-6.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/kelimshluvim6visutattzmimeturgamlearavit.pdf'
+  },
+  'כלים שלובים - גליון 7': {
+    he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/gilayonkelimshluvimmatarot.pdf',
+    ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/gilayonkelimshluvimmatarotaravit.pdf'
+  }
+};
+
 const PEDAGOGICAL_RECOMMENDATIONS = {
   language: {
     name: 'שפה ואוריינות',
@@ -1538,6 +1566,7 @@ function renderTier(title, tier, recommendations, domainKey, studentsInTier) {
         ${recommendations.map((rec, idx) => {
           const key = `${domainKey}-${tier}-${idx}`;
           const isExpanded = appState.expandedRecs[key];
+          const sourceLinks = rec.source && SOURCE_LINKS[rec.source] ? SOURCE_LINKS[rec.source] : null;
           return `
             <div class="bg-white/70 rounded-xl border border-slate-200 overflow-hidden">
               <button onclick="toggleRec('${key}')" class="w-full p-4 flex items-center justify-between hover:bg-slate-50 text-right">
@@ -1561,6 +1590,19 @@ function renderTier(title, tier, recommendations, domainKey, studentsInTier) {
                       <p class="text-xs font-bold text-slate-600 mb-2">כלים:</p>
                       <div class="flex flex-wrap gap-2">
                         ${rec.tools.map(t => `<span class="bg-white text-slate-700 px-2 py-1 rounded text-xs border">${t}</span>`).join('')}
+                      </div>
+                    </div>
+                  ` : ''}
+                  ${sourceLinks ? `
+                    <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-200">
+                      <p class="text-xs font-bold text-emerald-700 mb-2">📥 הורדת הגליון:</p>
+                      <div class="flex flex-wrap gap-2">
+                        <a href="${sourceLinks.he}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
+                          🇮🇱 עברית
+                        </a>
+                        <a href="${sourceLinks.ar}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
+                          🇸🇦 ערבית
+                        </a>
                       </div>
                     </div>
                   ` : ''}
@@ -1821,7 +1863,32 @@ function renderChat() {
 }
 
 function formatBotResponse(text) {
-  return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // המרת טקסט מודגש
+  let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // המרת קישורים בפורמט Markdown לקישורי HTML
+  formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-emerald-600 hover:text-emerald-700 underline font-medium">$1</a>');
+  return formatted;
+}
+
+// פונקציה להוספת קישורים לתשובות שמזכירות גליונות כלים שלובים
+function addSourceLinksToAnswer(answer) {
+  // בדיקה אם התשובה כבר מכילה קישורים
+  if (answer.includes('📥 **הורדת הגליון:**') || answer.includes('[עברית]')) {
+    return answer;
+  }
+  
+  // חיפוש גליון בתשובה
+  const gilayonMatch = answer.match(/גליון (\d)/);
+  if (gilayonMatch) {
+    const gilayonNum = gilayonMatch[1];
+    const sourceKey = `כלים שלובים - גליון ${gilayonNum}`;
+    const links = SOURCE_LINKS[sourceKey];
+    
+    if (links) {
+      answer += `\n\n📥 **הורדת הגליון:**\n• [עברית](${links.he})\n• [ערבית](${links.ar})`;
+    }
+  }
+  return answer;
 }
 
 function selectCategory(catId) {
@@ -2004,6 +2071,13 @@ function generateAllRecsQuestions() {
         
         if (rec.source) {
           answer += `📚 **מקור:** ${rec.source}\n`;
+          // הוספת קישורים להורדה
+          const sourceLinks = SOURCE_LINKS[rec.source];
+          if (sourceLinks) {
+            answer += `\n📥 **הורדת הגליון:**\n`;
+            answer += `• [עברית](${sourceLinks.he})\n`;
+            answer += `• [ערבית](${sourceLinks.ar})\n`;
+          }
         }
         
         answer += `\n📂 **תחום:** ${domainNames[domainKey] || domain.name} | **${tierNames[tier]}**`;
@@ -2045,14 +2119,14 @@ function generateResponse(lower, originalMessage) {
   for (const item of allQuestions) {
     const cleanQ = item.question.replace(/["""''`?!.,\\\-]/g, '').trim();
     if (cleanMessage === cleanQ) {
-      return item.answer;
+      return addSourceLinksToAnswer(item.answer);
     }
   }
   
   // חיפוש התאמה לשאלה המקורית
   for (const item of allQuestions) {
     if (originalMessage === item.question) {
-      return item.answer;
+      return addSourceLinksToAnswer(item.answer);
     }
   }
   
@@ -2069,7 +2143,7 @@ function generateResponse(lower, originalMessage) {
       if (itemTitleMatch) {
         const itemTitle = itemTitleMatch[1].trim();
         if (itemTitle === searchTitle) {
-          return item.answer;
+          return addSourceLinksToAnswer(item.answer);
         }
       }
     }
@@ -2116,7 +2190,7 @@ function generateResponse(lower, originalMessage) {
   
   // דרישת סף גבוהה יותר - לפחות 2 התאמות מדויקות או יחס גבוה
   if (bestMatch && bestMatchScore >= 4) {
-    return bestMatch.answer;
+    return addSourceLinksToAnswer(bestMatch.answer);
   }
   
   // חיפוש בהמלצות הפדגוגיות (PEDAGOGICAL_RECOMMENDATIONS) עם התאמה מדויקת יותר
@@ -2214,6 +2288,13 @@ function searchPedagogicalRecommendations(searchText) {
       
       if (rec.source) {
         response += `📚 **מקור:** ${rec.source}\n`;
+        // הוספת קישורים להורדה
+        const sourceLinks = SOURCE_LINKS[rec.source];
+        if (sourceLinks) {
+          response += `\n📥 **הורדת הגליון:**\n`;
+          response += `• [עברית](${sourceLinks.he})\n`;
+          response += `• [ערבית](${sourceLinks.ar})\n`;
+        }
       }
       
       response += `\n📂 **תחום:** ${domainNames[domainKey] || domain.name}`;
