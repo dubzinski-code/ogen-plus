@@ -2297,11 +2297,15 @@ function renderSummaryTable(domains) {
                       s.interventionDetails.forEach(d => {
                         // אם זה סוג external, השתמש בשם ישירות
                         if (d.type === 'external') {
-                          detailsSet.add(d.name);
+                          detailsSet.add(d.name.trim());
                         } else if (hasExternalKeyword(d.name) || hasExternalKeyword(d.detail)) {
                           // אחרת, חלץ רק את החלקים החיצוניים
                           const parts = extractExternalParts(d.detail || d.name);
-                          parts.forEach(p => detailsSet.add(p.trim()));
+                          parts.forEach(p => {
+                            // נרמול הטקסט - הסרת מקפים מיותרים בהתחלה ורווחים כפולים
+                            const normalized = p.trim().replace(/^-\s*/, '').trim();
+                            if (normalized) detailsSet.add(normalized);
+                          });
                         }
                       });
                     }
@@ -2309,7 +2313,10 @@ function renderSummaryTable(domains) {
                     // מענים חיצוניים מתוך learningIntensiveDetails (קלינאית תקשורת וכו')
                     if (s.learningIntensiveDetails && hasExternalKeyword(s.learningIntensiveDetails)) {
                       const parts = extractExternalParts(s.learningIntensiveDetails);
-                      parts.forEach(p => detailsSet.add(p.trim()));
+                      parts.forEach(p => {
+                        const normalized = p.trim().replace(/^-\s*/, '').trim();
+                        if (normalized) detailsSet.add(normalized);
+                      });
                     }
                     
                     // מענים ייחודיים לאוכלוסיות מיוחדות
@@ -2317,8 +2324,16 @@ function renderSummaryTable(domains) {
                       detailsSet.add(s.specialInterventions.trim());
                     }
                     
-                    // המרה למערך והסרת ערכים ריקים
-                    const detailsList = [...detailsSet].filter(d => d);
+                    // המרה למערך והסרת ערכים ריקים וכפילויות דומות
+                    let detailsList = [...detailsSet].filter(d => d);
+                    // הסרת כפילויות שונות רק ברווחים או סימנים
+                    const seen = new Set();
+                    detailsList = detailsList.filter(d => {
+                      const key = d.replace(/\s+/g, ' ').toLowerCase();
+                      if (seen.has(key)) return false;
+                      seen.add(key);
+                      return true;
+                    });
                     const details = detailsList.join(', ') || 'מענה חוץ בית ספרי';
                     
                     const key = 'external-' + s.id;
@@ -2672,6 +2687,55 @@ function renderIndividualPlan() {
             ` : '<p class="text-slate-700 bg-white/60 p-4 rounded-xl">✓ תקין בכל התחומים</p>'}
           </div>
         </div>
+
+        <!-- מענים שהתלמיד מקבל -->
+        ${(() => {
+          const interventionsList = [];
+          
+          // מענים לימודיים
+          if (student.interventions) {
+            if (student.interventions.learningGroupedLanguage) interventionsList.push('מענה קבוצתי בשפה');
+            if (student.interventions.learningGroupedMath) interventionsList.push('מענה קבוצתי במתמטיקה');
+            if (student.interventions.learningGroupedEnglish) interventionsList.push('מענה קבוצתי באנגלית');
+            if (student.interventions.learningIntensiveLanguage) interventionsList.push('מענה אינטנסיבי בשפה');
+            if (student.interventions.learningIntensiveMath) interventionsList.push('מענה אינטנסיבי במתמטיקה');
+            if (student.interventions.learningIntensiveEnglish) interventionsList.push('מענה אינטנסיבי באנגלית');
+            if (student.interventions.emotionalGrouped) interventionsList.push('מענה רגשי-חברתי קבוצתי');
+            if (student.interventions.emotionalIntensive) interventionsList.push('מענה רגשי-חברתי אינטנסיבי');
+          }
+          
+          // מענים מפורטים
+          if (student.interventionDetails && student.interventionDetails.length > 0) {
+            student.interventionDetails.forEach(d => {
+              if (d.type === 'external') {
+                interventionsList.push(d.name);
+              }
+            });
+          }
+          
+          // מענים ייחודיים
+          if (student.specialInterventions) {
+            interventionsList.push(student.specialInterventions);
+          }
+          
+          // הסרת כפילויות
+          const uniqueInterventions = [...new Set(interventionsList)];
+          
+          if (uniqueInterventions.length === 0) return '';
+          
+          return `
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-6 border border-indigo-200 mb-8">
+              <h4 class="font-bold text-slate-900 mb-4 text-lg">🎯 מענים שהתלמיד מקבל</h4>
+              <div class="flex flex-wrap gap-2">
+                ${uniqueInterventions.map(int => `
+                  <span class="bg-white px-3 py-2 rounded-lg text-sm text-indigo-800 border border-indigo-200 shadow-sm">
+                    ${int}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        })()}
 
         ${hasAnyChallenge ? `
           <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200 mb-8">
