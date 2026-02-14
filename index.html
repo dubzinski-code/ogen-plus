@@ -290,7 +290,9 @@ const COLUMN_MAPPINGS = {
   'מענים רגשיים, התנהגותיים או חברתיים לכלל הכיתה': 'מעניםרגשייםאוניברסלי',
   'מענים רגשיים, התנהגותיים או חברתיים ממוקדים': 'מעניםרגשייםקבוצתי',
   'מענים רגשיים, התהגותיים או חברתיים על ידי מומחים': 'מעניםרגשייםאינטנסיבי',
-  'מענים רגשיים, התנהגותיים או חברתיים על ידי מומחים': 'מעניםרגשייםאינטנסיבי'
+  'מענים רגשיים, התנהגותיים או חברתיים על ידי מומחים': 'מעניםרגשייםאינטנסיבי',
+  // מענים ייחודיים לאוכלוסיות מיוחדות
+  'מענים ייחודיים נוספים לאוכלוסיות מיוחדות': 'מעניםייחודיים'
 };
 
 // מילון פרקטיקות וכלים נוספים להסברים בעוזר הפדגוגי
@@ -823,8 +825,43 @@ function processOgenData(rawRows) {
         learningIntensiveEnglish: false,
         // מענים רגשיים/התנהגותיים/חברתיים
         emotionalGrouped: false,
-        emotionalIntensive: false
-      }
+        emotionalIntensive: false,
+        
+        // === מענים אוניברסליים לימודיים ===
+        learningUniversal: {
+          evaluationAdaptations: false,      // התאמות כלליות בדרכי הערכה
+          environmentAdaptations: false,     // התאמות בסביבת הלמידה
+          excellencePrograms: false,         // תוכניות לקידום מצוינות והצטיינות
+          studentshipPrograms: false,        // תוכניות לקידום תלמידאות
+          other: false                       // אחר
+        },
+        
+        // === מענים אוניברסליים רגשיים ===
+        emotionalUniversal: {
+          generalAdaptations: false,         // התאמות כלליות בסביבת הלמידה
+          climatePrograms: false,            // תוכניות לקידום אקלים וכישורים חברתיים
+          executiveFunctions: false          // תוכניות לקידום מיומנויות ניהול וקשב
+        },
+        
+        // === מענים ממוקדים רגשיים ===
+        emotionalTargeted: {
+          teacherSupport: false,             // תמיכה על ידי מחנך/ת
+          professionalSupport: false,        // תמיכה על ידי גורמים מקצועיים
+          other: false                       // אחר
+        },
+        
+        // === מענים אינטנסיביים רגשיים ===
+        emotionalIntensiveDetails: {
+          counselorMeetings: false,          // פגישות פרטניות עם יועצ/ת או פסיכולוגית
+          artTherapy: false,                 // טיפול באומנויות
+          behaviorIntervention: false,       // התערבות של מנתח/ת התנהגות
+          socialSkills: false,               // טיפול במיומנויות חברתיות
+          parentGuidance: false,             // הדרכת הורים
+          externalServices: false            // מענים חוץ בית ספריים
+        }
+      },
+      // פירוט טקסטואלי של מענים
+      interventionDetails: []
     };
     
     const scoreDomains = ['שפה', 'מתמטיקה', 'אנגלית', 'מוטיבציה', 'רגשי', 'התנהגותי', 'חברתי', 'קשב', 'תנועתי'];
@@ -860,6 +897,8 @@ function processOgenData(rawRows) {
       if (detail.includes('שפה')) student.interventions.learningIntensiveLanguage = true;
       if (detail.includes('מתמטיקה')) student.interventions.learningIntensiveMath = true;
       if (detail.includes('אנגלית')) student.interventions.learningIntensiveEnglish = true;
+      // שמירת הפירוט המלא לזיהוי מענים חיצוניים
+      student.learningIntensiveDetails = detail;
     }
     
     // בדיקת מענים רגשיים/התנהגותיים/חברתיים
@@ -883,6 +922,127 @@ function processOgenData(rawRows) {
       student.specialPopulation = detailRow[popIdx];
     }
     
+    // מענים ייחודיים לאוכלוסיות מיוחדות
+    const specialInterventionsIdx = columnIndices['מעניםייחודיים'];
+    if (specialInterventionsIdx !== undefined && mainRow[specialInterventionsIdx] === 'כן' && detailRow[specialInterventionsIdx]) {
+      student.specialInterventions = detailRow[specialInterventionsIdx];
+    }
+    
+    // === סריקת כל העמודות לזיהוי מענים מפורטים ===
+    for (let colIdx = 0; colIdx < mainRow.length; colIdx++) {
+      const cellValue = mainRow[colIdx];
+      if (cellValue !== 'כן') continue;
+      
+      const detailValue = detailRow[colIdx] || '';
+      const headerValue = (headerRow[colIdx] || '').toLowerCase();
+      const combinedText = (headerValue + ' ' + detailValue).toLowerCase();
+      
+      // פיצול פירוט לפי מקפים ושורות חדשות
+      const detailParts = detailValue.split(/[-\n]/).map(p => p.trim()).filter(p => p);
+      
+      // === מענים אוניברסליים לימודיים ===
+      if (combinedText.includes('התאמות') && combinedText.includes('הערכה')) {
+        student.interventions.learningUniversal.evaluationAdaptations = true;
+        student.interventionDetails.push({ type: 'learningUniversal', name: 'התאמות בדרכי הערכה', detail: detailValue });
+      }
+      if (combinedText.includes('התאמות') && combinedText.includes('סביבת')) {
+        student.interventions.learningUniversal.environmentAdaptations = true;
+        student.interventionDetails.push({ type: 'learningUniversal', name: 'התאמות בסביבת הלמידה', detail: detailValue });
+      }
+      if (combinedText.includes('מצוינות') || combinedText.includes('הצטיינות')) {
+        student.interventions.learningUniversal.excellencePrograms = true;
+        student.interventionDetails.push({ type: 'learningUniversal', name: 'תוכניות לקידום מצוינות', detail: detailValue });
+      }
+      if (combinedText.includes('תלמידאות')) {
+        student.interventions.learningUniversal.studentshipPrograms = true;
+        student.interventionDetails.push({ type: 'learningUniversal', name: 'תוכניות לקידום תלמידאות', detail: detailValue });
+      }
+      
+      // === מענים אוניברסליים רגשיים ===
+      if (combinedText.includes('התאמות') && (combinedText.includes('רגשי') || combinedText.includes('התנהגות') || combinedText.includes('חברתי'))) {
+        student.interventions.emotionalUniversal.generalAdaptations = true;
+        student.interventionDetails.push({ type: 'emotionalUniversal', name: 'התאמות להיבטים רגשיים/התנהגותיים', detail: detailValue });
+      }
+      if (combinedText.includes('אקלים') || (combinedText.includes('כישורים חברתיים') && combinedText.includes('כיתתי'))) {
+        student.interventions.emotionalUniversal.climatePrograms = true;
+        student.interventionDetails.push({ type: 'emotionalUniversal', name: 'תוכניות לקידום אקלים וכישורים חברתיים', detail: detailValue });
+      }
+      if (combinedText.includes('תפקודים ניהוליים') || (combinedText.includes('ניהול') && combinedText.includes('קשב'))) {
+        student.interventions.emotionalUniversal.executiveFunctions = true;
+        student.interventionDetails.push({ type: 'emotionalUniversal', name: 'תוכניות לקידום מיומנויות ניהול וקשב', detail: detailValue });
+      }
+      
+      // === מענים ממוקדים רגשיים ===
+      if (combinedText.includes('מחנך') && combinedText.includes('שיחות')) {
+        student.interventions.emotionalTargeted.teacherSupport = true;
+        student.interventionDetails.push({ type: 'emotionalTargeted', name: 'תמיכה על ידי מחנך/ת', detail: detailValue });
+      }
+      if (combinedText.includes('גורמים מקצועיים') || (combinedText.includes('תמיכה') && combinedText.includes('מקצועי'))) {
+        student.interventions.emotionalTargeted.professionalSupport = true;
+        student.interventionDetails.push({ type: 'emotionalTargeted', name: 'תמיכה על ידי גורמים מקצועיים', detail: detailValue });
+      }
+      
+      // === מענים אינטנסיביים רגשיים ===
+      if (combinedText.includes('יועצ') || combinedText.includes('פסיכולוג')) {
+        student.interventions.emotionalIntensiveDetails.counselorMeetings = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'פגישות עם יועצ/ת או פסיכולוגית', detail: detailValue });
+      }
+      if (combinedText.includes('טיפול באומנ') || combinedText.includes('תנועה') || combinedText.includes('מוזיקה') || combinedText.includes('אומנות פלסטית')) {
+        student.interventions.emotionalIntensiveDetails.artTherapy = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'טיפול באומנויות', detail: detailValue });
+      }
+      if (combinedText.includes('מנתח התנהגות') || combinedText.includes('תוכנית התנהגותית')) {
+        student.interventions.emotionalIntensiveDetails.behaviorIntervention = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'התערבות התנהגותית', detail: detailValue });
+      }
+      if (combinedText.includes('מיומנויות חברתיות') && !combinedText.includes('כיתתי')) {
+        student.interventions.emotionalIntensiveDetails.socialSkills = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'טיפול במיומנויות חברתיות', detail: detailValue });
+      }
+      if (combinedText.includes('הדרכת הורים')) {
+        student.interventions.emotionalIntensiveDetails.parentGuidance = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'הדרכת הורים', detail: detailValue });
+      }
+      if (combinedText.includes('חוץ בית ספרי') || combinedText.includes('חוץ ביה"ס') || combinedText.includes('מענים חוץ')) {
+        student.interventions.emotionalIntensiveDetails.externalServices = true;
+        student.interventionDetails.push({ type: 'emotionalIntensive', name: 'מענים חוץ בית ספריים', detail: detailValue });
+      }
+      
+      // זיהוי מענים חיצוניים ספציפיים (קלינאית תקשורת, מרפאה בעיסוק וכו')
+      if (combinedText.includes('קלינאית') || combinedText.includes('קלינאי תקשורת') || combinedText.includes('קלינאות')) {
+        student.interventions.emotionalIntensiveDetails.externalServices = true;
+        student.interventionDetails.push({ type: 'external', name: 'קלינאות תקשורת', detail: detailValue });
+      }
+      if (combinedText.includes('מרפאה בעיסוק') || combinedText.includes('מרפאת בעיסוק') || combinedText.includes('ריפוי בעיסוק')) {
+        student.interventions.emotionalIntensiveDetails.externalServices = true;
+        student.interventionDetails.push({ type: 'external', name: 'מרפאה בעיסוק', detail: detailValue });
+      }
+      if (combinedText.includes('פיזיותרפ')) {
+        student.interventions.emotionalIntensiveDetails.externalServices = true;
+        student.interventionDetails.push({ type: 'external', name: 'פיזיותרפיה', detail: detailValue });
+      }
+      
+      // בדיקה לפירוט משולב - פיצול מענים
+      detailParts.forEach(part => {
+        const partLower = part.toLowerCase();
+        if (partLower.includes('מענה מותאם פרט') && partLower.includes('מתמטיקה')) {
+          student.interventions.learningIntensiveMath = true;
+        }
+        if (partLower.includes('מענה מותאם פרט') && partLower.includes('שפה')) {
+          student.interventions.learningIntensiveLanguage = true;
+        }
+        if (partLower.includes('מענה מותאם פרט') && partLower.includes('אנגלית')) {
+          student.interventions.learningIntensiveEnglish = true;
+        }
+        if (partLower.includes('חוץ בית ספרי') || partLower.includes('מענים חוץ')) {
+          student.interventions.emotionalIntensiveDetails.externalServices = true;
+          if (!student.interventionDetails.find(d => d.name === 'מענים חוץ בית ספריים')) {
+            student.interventionDetails.push({ type: 'emotionalIntensive', name: 'מענים חוץ בית ספריים', detail: part });
+          }
+        }
+      });
+    }
+    
     if (Object.keys(student.scores).length > 0) students.push(student);
     i += skipNext ? 2 : 1;
   }
@@ -900,6 +1060,8 @@ let appState = {
   selectedStudent: null,
   selectedDomain: null,
   selectedStatusSection: null,
+  showSummaryTable: false,
+  resourceInputs: {},
   expandedRecs: {},
   notes: {},
   chatMessages: [{ role: 'assistant', content: 'שלום! 👋\n\nאני העוזר הפדגוגי שלך. אני כאן לעזור לך עם:\n• תמיכה ממוקדת בתלמידים\n• שיח עם הורים\n• עבודה עם צוות בית הספר\n• הסברי מונחים פדגוגיים\n• פתרון בעיות בזמן אמת\n\n**בחרי קטגוריה למעלה** או כתבי שאלה חופשית.' }],
@@ -1418,6 +1580,772 @@ function renderClassroomStatus() {
   `;
 }
 
+// פונקציה ליצירת טבלה מסכמת
+function renderSummaryTable(domains) {
+  const students = appState.students;
+  const resourceOptions = ['מחנכת', 'מורת שילוב', 'מורת רוחב', 'שעות פרטניות', 'קלינאית תקשורת', 'פסיכולוגית', 'יועצת', 'מטפלת באומנות', 'אחר'];
+  
+  // תחומים לא-לימודיים לרובד אוניברסלי
+  const nonAcademicDomains = domains.filter(d => d.type === 'emotional');
+  
+  // תחומים לימודיים
+  const academicDomains = domains.filter(d => d.type === 'learning');
+  
+  // פונקציה לקבלת המלצות לפי תחום ורובד
+  const getRecommendations = (domainKey, tier) => {
+    const recs = PEDAGOGICAL_RECOMMENDATIONS[domainKey];
+    if (!recs || !recs[tier]) return [];
+    return recs[tier].slice(0, 3).map(r => r.title);
+  };
+  
+  // פונקציה לקבלת קשיים ותלמידים בתחום - מחולק לפי רובד מהעוגן
+  const getDifficultiesByTier = (domain) => {
+    const result = {
+      universal: { difficulties: [], students: [] },
+      targeted: { difficulties: [], students: [] },
+      intensive: { difficulties: [], students: [] }
+    };
+    
+    const allDifficulties = new Set();
+    
+    students.forEach(s => {
+      if (s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד') {
+        // בדיקה לאיזה רובד התלמיד שייך לפי נתוני העוגן
+        let tier = 'universal';
+        if (s.interventions) {
+          if (s.interventions[domain.intensiveKey]) {
+            tier = 'intensive';
+          } else if (s.interventions[domain.groupedKey]) {
+            tier = 'targeted';
+          }
+        }
+        
+        // הוספת התלמיד לרובד המתאים
+        if (!result[tier].students.includes(s.name)) {
+          result[tier].students.push(s.name);
+        }
+        
+        // הוספת הקשיים של התלמיד
+        if (s.details && s.details[domain.scoreKey]) {
+          s.details[domain.scoreKey].split('\\n').filter(d => d.trim()).forEach(detail => {
+            const clean = detail.replace(/^-\\s*/, '').trim();
+            if (clean) {
+              allDifficulties.add(clean);
+              if (!result[tier].difficulties.includes(clean)) {
+                result[tier].difficulties.push(clean);
+              }
+            }
+          });
+        }
+      }
+    });
+    
+    return result;
+  };
+  
+  // פונקציה ליצירת שורת משאבים עם ערכים מוצגים להדפסה
+  const renderResourceCell = (key, existingResource = '') => {
+    const saved = appState.resourceInputs[key] || { provider: '', hours: '', otherProvider: '', additionalStudents: '' };
+    const displayProvider = saved.provider === 'אחר' ? saved.otherProvider : saved.provider;
+    const displayHours = saved.hours;
+    
+    return `
+      <div class="space-y-2 resource-cell" data-key="${key}">
+        ${existingResource ? `<div class="text-xs text-slate-500 mb-1">מהעוגן: ${existingResource}</div>` : ''}
+        <select onchange="updateResourceInput('${key}', 'provider', this.value); this.nextElementSibling.style.display = this.value === 'אחר' ? 'block' : 'none';" 
+          class="resource-select w-full text-xs border border-slate-300 rounded px-2 py-1 bg-white">
+          <option value="">בחרי גורם...</option>
+          ${resourceOptions.map(opt => `<option value="${opt}" ${saved.provider === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+        </select>
+        <input type="text" placeholder="פרטי גורם אחר" value="${saved.otherProvider || ''}"
+          onchange="updateResourceInput('${key}', 'otherProvider', this.value)"
+          class="resource-other w-full text-xs border border-slate-300 rounded px-2 py-1 ${saved.provider === 'אחר' ? '' : 'hidden'}" 
+          style="${saved.provider === 'אחר' ? '' : 'display:none'}" />
+        <input type="text" placeholder="שעות שבועיות" value="${saved.hours || ''}"
+          onchange="updateResourceInput('${key}', 'hours', this.value)"
+          class="resource-hours w-full text-xs border border-slate-300 rounded px-2 py-1" />
+        <span class="resource-display hidden print-only text-xs">${displayProvider ? displayProvider + (displayHours ? ' - ' + displayHours + ' שעות' : '') : ''}</span>
+      </div>
+    `;
+  };
+  
+  // פונקציה ליצירת תא תלמידים עם אפשרות להוספה והסרה
+  const renderStudentsCell = (key, studentNames) => {
+    const saved = appState.resourceInputs[key] || {};
+    const additionalStudents = saved.additionalStudents || '';
+    const removedStudents = saved.removedStudents || '';
+    const removedList = removedStudents.split(',').map(s => s.trim()).filter(s => s);
+    
+    // סינון תלמידים שהוסרו
+    const filteredStudents = studentNames.filter(name => !removedList.includes(name));
+    
+    // הוספת תלמידים נוספים
+    const addedList = additionalStudents.split(',').map(s => s.trim()).filter(s => s);
+    const finalStudents = [...filteredStudents, ...addedList];
+    
+    return `
+      <div class="students-cell" data-key="${key}">
+        <div class="students-list">${filteredStudents.join(', ')}</div>
+        <div class="mt-1 space-y-1">
+          <input type="text" placeholder="➕ הוסיפי תלמידים (מופרדים בפסיק)" value="${additionalStudents}"
+            onchange="updateResourceInput('${key}', 'additionalStudents', this.value)"
+            class="additional-students w-full text-xs border border-green-300 rounded px-2 py-1 bg-green-50" />
+          <input type="text" placeholder="➖ הסירי תלמידים (מופרדים בפסיק)" value="${removedStudents}"
+            onchange="updateResourceInput('${key}', 'removedStudents', this.value)"
+            class="removed-students w-full text-xs border border-red-300 rounded px-2 py-1 bg-red-50" />
+        </div>
+        <span class="students-display hidden print-only text-xs">${finalStudents.join(', ')}</span>
+      </div>
+    `;
+  };
+  
+  // פונקציה ליצירת שדה הערות
+  const renderNotesField = (key) => {
+    const saved = appState.resourceInputs[key] || {};
+    const notes = saved.notes || '';
+    return `
+      <div class="notes-cell mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200" data-key="${key}">
+        <label class="text-sm font-medium text-slate-700 block mb-2">📝 הערות:</label>
+        <textarea 
+          placeholder="הערות נוספות..."
+          onchange="updateResourceInput('${key}', 'notes', this.value)"
+          class="notes-input w-full text-sm border border-slate-300 rounded px-3 py-2 min-h-[60px]">${notes}</textarea>
+        <span class="notes-display hidden print-only text-sm">${notes}</span>
+      </div>
+    `;
+  };
+  
+  // בניית טבלת תחום לימודי - מחולק לרבדים
+  const renderAcademicDomainTable = (domain) => {
+    // פונקציה לפיצול קשיים מטקסט
+    const parseDifficulties = (text) => {
+      if (!text) return [];
+      // פיצול לפי שורות חדשות, מקפים או פסיקים
+      return text
+        .split(/[\n,]/)
+        .flatMap(part => part.split(/\s*-\s*/))
+        .map(d => d.trim())
+        .filter(d => d.length > 0);
+    };
+    
+    // איסוף כל הקשיים הייחודיים (ללא כפילויות) מתלמידים מתקשים
+    const allDifficultiesSet = new Set();
+    
+    students.forEach(s => {
+      if (s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד') {
+        // איסוף קשיים
+        if (s.details && s.details[domain.scoreKey]) {
+          parseDifficulties(s.details[domain.scoreKey]).forEach(diff => {
+            allDifficultiesSet.add(diff);
+          });
+        }
+      }
+    });
+    
+    // איסוף תלמידים לפי רובד - כמו בתוכנית הכיתתית (לא תלוי בציון)
+    const targetedStudents = students.filter(s => 
+      s.interventions && s.interventions[domain.groupedKey]
+    );
+    const intensiveStudents = students.filter(s => 
+      s.interventions && s.interventions[domain.intensiveKey]
+    );
+    
+    const allDifficulties = [...allDifficultiesSet];
+    
+    if (allDifficulties.length === 0 && targetedStudents.length === 0 && intensiveStudents.length === 0) {
+      return `
+        <div class="bg-emerald-50 rounded-lg p-4 text-center text-emerald-700">
+          ✓ אין תלמידים מתקשים בתחום זה
+        </div>
+      `;
+    }
+    
+    let html = '<div class="space-y-4">';
+    
+    // איסוף תלמידים מתקשים בתחום
+    const strugglingStudents = students.filter(s => 
+      s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד'
+    );
+    
+    // רובד אוניברסלי - כל הקשיים ביחד (ללא כפילויות)
+    if (allDifficulties.length > 0 || strugglingStudents.length > 0) {
+      const uniRecs = getRecommendations(domain.key, 'universal');
+      const uniKey = `${domain.key}-universal`;
+      html += `
+        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">🌐 רובד אוניברסלי</span>
+          </div>
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="bg-blue-100">
+                <th class="border border-blue-200 px-3 py-2 text-right font-bold">קשיים בתחום</th>
+                <th class="border border-blue-200 px-3 py-2 text-right font-bold">תלמידים מתקשים</th>
+                <th class="border border-blue-200 px-3 py-2 text-right font-bold">המלצות פדגוגיות</th>
+                <th class="border border-blue-200 px-3 py-2 text-right font-bold">משאבים</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-blue-200 px-3 py-2 text-xs">${allDifficulties.join(', ') || '-'}</td>
+                <td class="border border-blue-200 px-3 py-2 text-sm">${strugglingStudents.map(s => s.name).join(', ') || '-'}</td>
+                <td class="border border-blue-200 px-3 py-2 text-xs">${uniRecs.join(', ') || '-'}</td>
+                <td class="border border-blue-200 px-3 py-2">${renderResourceCell(uniKey)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+    
+    // רובד ממוקד - כל התלמידים ברובד זה
+    if (targetedStudents.length > 0) {
+      const tarRecs = getRecommendations(domain.key, 'targeted');
+      
+      // בתחום שפה - פיצול לקבוצות לפי נושא עבודה
+      if (domain.key === 'language') {
+        // קשיים הקשורים לקריאה
+        const readingKeywords = ['קריאה', 'פענוח', 'שטף', 'קצב קריאה', 'דיוק בקריאה'];
+        
+        // חלוקת תלמידים וקשיים לקבוצות
+        const readingGroup = { students: new Set(), difficulties: new Set() };
+        const otherGroup = { students: new Set(), difficulties: new Set() };
+        
+        targetedStudents.forEach(s => {
+          if (s.details && s.details[domain.scoreKey]) {
+            const studentDiffs = parseDifficulties(s.details[domain.scoreKey]);
+            let hasReading = false;
+            let hasOther = false;
+            
+            studentDiffs.forEach(diff => {
+              const isReading = readingKeywords.some(kw => diff.includes(kw));
+              if (isReading) {
+                readingGroup.difficulties.add(diff);
+                hasReading = true;
+              } else {
+                otherGroup.difficulties.add(diff);
+                hasOther = true;
+              }
+            });
+            
+            if (hasReading) readingGroup.students.add(s.name);
+            if (hasOther) otherGroup.students.add(s.name);
+            
+            // אם אין קשיים ספציפיים, הוסף לקבוצת "אחר"
+            if (!hasReading && !hasOther) {
+              otherGroup.students.add(s.name);
+            }
+          } else {
+            // תלמיד ללא פירוט קשיים - הוסף לקבוצת "אחר"
+            otherGroup.students.add(s.name);
+          }
+        });
+        
+        html += `
+          <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs font-medium">👥 רובד ממוקד</span>
+            </div>
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="bg-amber-100">
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">נושא עבודה</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">קשיים</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">תלמידים</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">המלצות פדגוגיות</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">משאבים</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${readingGroup.students.size > 0 ? `
+                  <tr>
+                    <td class="border border-amber-200 px-3 py-2 font-medium">📖 קריאה</td>
+                    <td class="border border-amber-200 px-3 py-2 text-xs">${[...readingGroup.difficulties].join(', ') || '-'}</td>
+                    <td class="border border-amber-200 px-3 py-2">${renderStudentsCell('language-targeted-reading', [...readingGroup.students])}</td>
+                    <td class="border border-amber-200 px-3 py-2 text-xs">${tarRecs.join(', ') || '-'}</td>
+                    <td class="border border-amber-200 px-3 py-2">${renderResourceCell('language-targeted-reading')}</td>
+                  </tr>
+                ` : ''}
+                ${otherGroup.students.size > 0 ? `
+                  <tr>
+                    <td class="border border-amber-200 px-3 py-2 font-medium">✍️ כתיבה ושפה</td>
+                    <td class="border border-amber-200 px-3 py-2 text-xs">${[...otherGroup.difficulties].join(', ') || '-'}</td>
+                    <td class="border border-amber-200 px-3 py-2">${renderStudentsCell('language-targeted-writing', [...otherGroup.students])}</td>
+                    <td class="border border-amber-200 px-3 py-2 text-xs">${tarRecs.join(', ') || '-'}</td>
+                    <td class="border border-amber-200 px-3 py-2">${renderResourceCell('language-targeted-writing')}</td>
+                  </tr>
+                ` : ''}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        // תחומים אחרים - שורה אחת עם כל התלמידים
+        const tarKey = `${domain.key}-targeted`;
+        
+        // איסוף קשיים ייחודיים של תלמידי הרובד הממוקד
+        const targetedDifficultiesSet = new Set();
+        targetedStudents.forEach(s => {
+          if (s.details && s.details[domain.scoreKey]) {
+            parseDifficulties(s.details[domain.scoreKey]).forEach(diff => {
+              targetedDifficultiesSet.add(diff);
+            });
+          }
+        });
+        const targetedDifficulties = [...targetedDifficultiesSet];
+        
+        html += `
+          <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs font-medium">👥 רובד ממוקד</span>
+            </div>
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="bg-amber-100">
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">קשיים</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">תלמידים</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">המלצות פדגוגיות</th>
+                  <th class="border border-amber-200 px-3 py-2 text-right font-bold">משאבים</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border border-amber-200 px-3 py-2 text-xs">${targetedDifficulties.join(', ') || '-'}</td>
+                  <td class="border border-amber-200 px-3 py-2">${renderStudentsCell(tarKey, targetedStudents.map(s => s.name))}</td>
+                  <td class="border border-amber-200 px-3 py-2 text-xs">${tarRecs.join(', ') || '-'}</td>
+                  <td class="border border-amber-200 px-3 py-2">${renderResourceCell(tarKey)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
+    
+    // רובד אינטנסיבי - כל התלמידים ברובד זה
+    if (intensiveStudents.length > 0) {
+      const intRecs = getRecommendations(domain.key, 'intensive');
+      const intKey = `${domain.key}-intensive`;
+      
+      // איסוף קשיים ייחודיים של תלמידי הרובד האינטנסיבי
+      const intensiveDifficultiesSet = new Set();
+      intensiveStudents.forEach(s => {
+        if (s.details && s.details[domain.scoreKey]) {
+          parseDifficulties(s.details[domain.scoreKey]).forEach(diff => {
+            intensiveDifficultiesSet.add(diff);
+          });
+        }
+      });
+      const intensiveDifficulties = [...intensiveDifficultiesSet];
+      
+      html += `
+        <div class="bg-red-50 rounded-lg p-4 border border-red-200">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">👤 רובד אינטנסיבי</span>
+          </div>
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="bg-red-100">
+                <th class="border border-red-200 px-3 py-2 text-right font-bold">קשיים</th>
+                <th class="border border-red-200 px-3 py-2 text-right font-bold">תלמידים</th>
+                <th class="border border-red-200 px-3 py-2 text-right font-bold">המלצות פדגוגיות</th>
+                <th class="border border-red-200 px-3 py-2 text-right font-bold">משאבים</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-red-200 px-3 py-2 text-xs">${intensiveDifficulties.join(', ') || '-'}</td>
+                <td class="border border-red-200 px-3 py-2">${renderStudentsCell(intKey, intensiveStudents.map(s => s.name))}</td>
+                <td class="border border-red-200 px-3 py-2 text-xs">${intRecs.join(', ') || '-'}</td>
+                <td class="border border-red-200 px-3 py-2">${renderResourceCell(intKey)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+    
+    // שדה הערות לתחום
+    html += renderNotesField(`${domain.key}-notes`);
+    
+    html += '</div>';
+    return html;
+  };
+  
+  // בניית טבלת תחום רגשי/התנהגותי
+  const renderEmotionalDomainTable = (domain) => {
+    const studentsWithDifficulty = students.filter(s => 
+      s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד'
+    );
+    
+    if (studentsWithDifficulty.length === 0) {
+      return `
+        <div class="bg-emerald-50 rounded-lg p-4 text-center text-emerald-700">
+          ✓ אין תלמידים מתקשים בתחום זה
+        </div>
+      `;
+    }
+    
+    // חלוקה לרבדים
+    const grouped = studentsWithDifficulty.filter(s => s.interventions && s.interventions.emotionalGrouped);
+    const intensive = studentsWithDifficulty.filter(s => s.interventions && s.interventions.emotionalIntensive);
+    
+    const rows = [];
+    if (grouped.length > 0) {
+      rows.push({ tier: 'ממוקד', students: grouped, tierKey: 'targeted', colorClass: 'amber' });
+    }
+    if (intensive.length > 0) {
+      rows.push({ tier: 'אינטנסיבי', students: intensive, tierKey: 'intensive', colorClass: 'red' });
+    }
+    
+    if (rows.length === 0) return '';
+    
+    return `
+      <div class="space-y-4">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100">
+                <th class="border border-slate-300 px-3 py-2 text-right font-bold">רובד</th>
+                <th class="border border-slate-300 px-3 py-2 text-right font-bold">תלמידים</th>
+                <th class="border border-slate-300 px-3 py-2 text-right font-bold">המלצות פדגוגיות</th>
+                <th class="border border-slate-300 px-3 py-2 text-right font-bold">משאבים</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(row => {
+                const recs = getRecommendations(domain.key, row.tierKey);
+                const key = `${domain.key}-${row.tier}`;
+                return `
+                  <tr class="hover:bg-slate-50">
+                    <td class="border border-slate-300 px-3 py-2">
+                      <span class="px-2 py-1 rounded text-xs font-medium bg-${row.colorClass}-100 text-${row.colorClass}-700">
+                        ${row.tier}
+                      </span>
+                    </td>
+                    <td class="border border-slate-300 px-3 py-2">${renderStudentsCell(key, row.students.map(s => s.name))}</td>
+                    <td class="border border-slate-300 px-3 py-2 text-xs">${recs.join(', ') || '-'}</td>
+                    <td class="border border-slate-300 px-3 py-2">${renderResourceCell(key)}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${renderNotesField(`${domain.key}-notes`)}
+      </div>
+    `;
+  };
+
+  return `
+    <div class="animate-fadeIn space-y-6">
+      <!-- כפתורי פעולה -->
+      <div class="flex flex-wrap gap-3 justify-between items-center no-print">
+        <button onclick="toggleSummaryTable()" 
+          class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+          <span>→</span> חזרה לתוכנית הכיתתית
+        </button>
+        <div class="flex gap-2">
+          <button onclick="printSummaryTable()" 
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+            🖨️ הדפסה בפורמט טבלה
+          </button>
+          <button onclick="exportToWord()" 
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+            📄 Word
+          </button>
+        </div>
+      </div>
+      
+      <!-- תוכן הטבלה להדפסה -->
+      <div id="summaryTableContent" class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+        <!-- כותרת -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6">
+          <h2 class="text-2xl font-bold text-center">📊 טבלת מענים מסכמת</h2>
+          <p class="text-center text-indigo-100 mt-2">תוכנית התערבות כיתתית לפי מודל MTSS</p>
+        </div>
+        
+        <!-- מענים אוניברסליים לכלל הכיתה -->
+        <div class="p-6 border-b-4 border-blue-300 bg-blue-50">
+          <h3 class="text-xl font-bold text-slate-900 mb-2">
+            🌐 מענים אוניברסליים לכלל הכיתה
+          </h3>
+          <p class="text-sm text-slate-600 mb-4">התאמות והמלצות שרלוונטיות לכל השיעורים והפעילויות</p>
+          
+          <!-- התאמות כלליות עם תלמידים -->
+          <div class="bg-white rounded-lg p-4 shadow-sm mb-4">
+            <h4 class="font-bold text-blue-800 mb-3">📋 התאמות כלליות</h4>
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="bg-blue-100">
+                  <th class="border border-blue-200 px-3 py-2 text-right font-bold">סוג התאמה</th>
+                  <th class="border border-blue-200 px-3 py-2 text-right font-bold">תלמידים שבגינם המענה ניתן</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(() => {
+                  // תלמידים עם התאמות הערכה - כל מי שמתקשה ויש לו ציון מתקשה
+                  const evaluationStudents = students.filter(s => 
+                    Object.values(s.scores).some(score => score === 'מתקשה' || score === 'מתקשה מאד')
+                  ).map(s => s.name);
+                  
+                  // תלמידים עם התאמות סביבה
+                  const environmentStudents = students.filter(s => 
+                    s.scores['קשב'] === 'מתקשה' || s.scores['קשב'] === 'מתקשה מאד' ||
+                    s.scores['תנועתי'] === 'מתקשה' || s.scores['תנועתי'] === 'מתקשה מאד'
+                  ).map(s => s.name);
+                  
+                  // תלמידים לאקלים כיתתי
+                  const climateStudents = students.filter(s => 
+                    s.scores['חברתי'] === 'מתקשה' || s.scores['חברתי'] === 'מתקשה מאד' ||
+                    s.scores['רגשי'] === 'מתקשה' || s.scores['רגשי'] === 'מתקשה מאד'
+                  ).map(s => s.name);
+                  
+                  // תלמידים לניהול וקשב
+                  const executiveStudents = students.filter(s => 
+                    s.scores['קשב'] === 'מתקשה' || s.scores['קשב'] === 'מתקשה מאד' ||
+                    s.scores['מוטיבציה'] === 'מתקשה' || s.scores['מוטיבציה'] === 'מתקשה מאד'
+                  ).map(s => s.name);
+                  
+                  const adaptations = [
+                    { name: 'התאמות בדרכי הערכה', students: evaluationStudents, desc: 'הארכת זמן, הקראה, התאמת מבחנים' },
+                    { name: 'התאמות בסביבת הלמידה', students: environmentStudents, desc: 'ישיבה מותאמת, הפחתת גירויים' },
+                    { name: 'תוכניות לקידום אקלים כיתתי', students: climateStudents, desc: 'כישורים חברתיים, ויסות רגשי' },
+                    { name: 'תוכניות לקידום מיומנויות ניהול וקשב', students: executiveStudents, desc: 'תפקודים ניהוליים' }
+                  ];
+                  
+                  return adaptations.filter(a => a.students.length > 0).map(adaptation => `
+                    <tr class="hover:bg-blue-50">
+                      <td class="border border-blue-200 px-3 py-2">
+                        <div class="font-medium">${adaptation.name}</div>
+                        <div class="text-xs text-slate-500">${adaptation.desc}</div>
+                      </td>
+                      <td class="border border-blue-200 px-3 py-2 text-sm">${adaptation.students.join(', ')}</td>
+                    </tr>
+                  `).join('') || '<tr><td colspan="2" class="border border-blue-200 px-3 py-2 text-center text-slate-500">אין תלמידים הזקוקים להתאמות מיוחדות</td></tr>';
+                })()}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- מענים רגשיים-התנהגותיים-חברתיים לכלל הכיתה -->
+          <div class="bg-white rounded-lg p-4 shadow-sm mb-4">
+            <h4 class="font-bold text-blue-800 mb-3">💚 מענים רגשיים-התנהגותיים-חברתיים לכלל הכיתה</h4>
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="bg-blue-100">
+                  <th class="border border-blue-200 px-3 py-2 text-right font-bold">תחום</th>
+                  <th class="border border-blue-200 px-3 py-2 text-right font-bold">המלצות לכלל הכיתה</th>
+                  <th class="border border-blue-200 px-3 py-2 text-right font-bold">תלמידים שבגינם המענה ניתן</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${nonAcademicDomains.map(domain => {
+                  const recs = getRecommendations(domain.key, 'universal');
+                  const studentsInDomain = students.filter(s => 
+                    s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד'
+                  ).map(s => s.name);
+                  
+                  return `
+                    <tr class="hover:bg-blue-50">
+                      <td class="border border-blue-200 px-3 py-2 font-medium">${domain.icon} ${domain.name}</td>
+                      <td class="border border-blue-200 px-3 py-2 text-xs">${recs.join(', ') || '-'}</td>
+                      <td class="border border-blue-200 px-3 py-2 text-sm">${studentsInDomain.join(', ') || '-'}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- עקרונות פדגוגיים מנחים -->
+          <div class="bg-white rounded-lg p-4 shadow-sm">
+            <h4 class="font-bold text-blue-800 mb-3">💡 עקרונות פדגוגיים מנחים</h4>
+            <ul class="text-sm space-y-1 text-slate-700">
+              <li>• הוראה מפורשת ומובנית</li>
+              <li>• מתן משוב מיידי ומעצב</li>
+              <li>• שימוש בעזרים חזותיים</li>
+              <li>• בניית שגרות ומסגרת ברורה</li>
+            </ul>
+          </div>
+          
+          ${renderNotesField('universal-notes')}
+        </div>
+        
+        <!-- תחומים לימודיים -->
+        ${academicDomains.map(domain => `
+          <div class="p-6 border-b border-slate-200">
+            <h3 class="text-xl font-bold text-slate-900 mb-4">${domain.icon} ${domain.name}</h3>
+            ${renderAcademicDomainTable(domain)}
+          </div>
+        `).join('')}
+        
+        <!-- תחומים רגשיים-התנהגותיים-חברתיים -->
+        <div class="p-6 border-b border-slate-200">
+          <h3 class="text-xl font-bold text-slate-900 mb-4">💚 תחומים רגשיים-התנהגותיים-חברתיים (מענה ממוקד ואינטנסיבי)</h3>
+          <div class="space-y-4">
+            ${nonAcademicDomains.map(domain => {
+              const studentsGrouped = students.filter(s => 
+                (s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד') &&
+                s.interventions && s.interventions.emotionalGrouped
+              );
+              const studentsIntensive = students.filter(s => 
+                (s.scores[domain.scoreKey] === 'מתקשה' || s.scores[domain.scoreKey] === 'מתקשה מאד') &&
+                s.interventions && s.interventions.emotionalIntensive
+              );
+              
+              if (studentsGrouped.length === 0 && studentsIntensive.length === 0) return '';
+              
+              const tarRecs = getRecommendations(domain.key, 'targeted');
+              const intRecs = getRecommendations(domain.key, 'intensive');
+              
+              return `
+                <div class="bg-slate-50 rounded-lg p-4">
+                  <h4 class="font-bold text-slate-800 mb-3">${domain.icon} ${domain.name}</h4>
+                  <table class="w-full border-collapse text-sm">
+                    <thead>
+                      <tr class="bg-slate-200">
+                        <th class="border border-slate-300 px-3 py-2 text-right">רובד</th>
+                        <th class="border border-slate-300 px-3 py-2 text-right">תלמידים</th>
+                        <th class="border border-slate-300 px-3 py-2 text-right">המלצות</th>
+                        <th class="border border-slate-300 px-3 py-2 text-right">משאבים</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${studentsGrouped.length > 0 ? `
+                        <tr class="bg-amber-50">
+                          <td class="border border-slate-300 px-3 py-2">
+                            <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">ממוקד</span>
+                          </td>
+                          <td class="border border-slate-300 px-3 py-2">${renderStudentsCell(domain.key + '-emo-grouped', studentsGrouped.map(s => s.name))}</td>
+                          <td class="border border-slate-300 px-3 py-2 text-xs">${tarRecs.join(', ') || '-'}</td>
+                          <td class="border border-slate-300 px-3 py-2">${renderResourceCell(domain.key + '-emo-grouped')}</td>
+                        </tr>
+                      ` : ''}
+                      ${studentsIntensive.length > 0 ? `
+                        <tr class="bg-red-50">
+                          <td class="border border-slate-300 px-3 py-2">
+                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">אינטנסיבי</span>
+                          </td>
+                          <td class="border border-slate-300 px-3 py-2">${renderStudentsCell(domain.key + '-emo-intensive', studentsIntensive.map(s => s.name))}</td>
+                          <td class="border border-slate-300 px-3 py-2 text-xs">${intRecs.join(', ') || '-'}</td>
+                          <td class="border border-slate-300 px-3 py-2">${renderResourceCell(domain.key + '-emo-intensive')}</td>
+                        </tr>
+                      ` : ''}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          ${renderNotesField('emotional-domains-notes')}
+        </div>
+        
+        <!-- מענים חיצוניים -->
+        ${(() => {
+          // מילות מפתח למענים חיצוניים
+          const externalKeywords = ['חוץ בית ספרי', 'חוץ ביה"ס', 'קלינאית', 'קלינאות', 'קלינאי', 'מרפאה בעיסוק', 'מרפאת בעיסוק', 'ריפוי בעיסוק', 'פיזיותרפ'];
+          
+          // פונקציה לחילוץ רק החלקים החיצוניים מטקסט
+          const extractExternalParts = (text) => {
+            if (!text) return [];
+            // פיצול לפי מקפים
+            const parts = text.split(/\s*-\s*/);
+            // סינון רק חלקים שמכילים מילות מפתח חיצוניות
+            return parts.filter(part => 
+              externalKeywords.some(kw => part.toLowerCase().includes(kw.toLowerCase()))
+            );
+          };
+          
+          // פונקציה לבדוק אם טקסט מכיל מילות מפתח חיצוניות
+          const hasExternalKeyword = (text) => {
+            if (!text) return false;
+            return externalKeywords.some(kw => text.toLowerCase().includes(kw.toLowerCase()));
+          };
+          
+          // איסוף תלמידים עם מענים חיצוניים או מענים ייחודיים לאוכלוסיות מיוחדות
+          const externalStudents = students.filter(s => 
+            s.interventions?.emotionalIntensiveDetails?.externalServices ||
+            s.specialInterventions ||
+            hasExternalKeyword(s.learningIntensiveDetails) ||
+            (s.interventionDetails && s.interventionDetails.some(d => 
+              d.type === 'external' || hasExternalKeyword(d.name) || hasExternalKeyword(d.detail)
+            ))
+          );
+          
+          if (externalStudents.length === 0) return '';
+          
+          return `
+            <div class="p-6 bg-purple-50">
+              <h3 class="text-xl font-bold text-slate-900 mb-4">🏥 מענים חיצוניים ומענים ייחודיים</h3>
+              <p class="text-sm text-slate-600 mb-4">תלמידים המקבלים שירותים מגורמים חיצוניים לבית הספר או מענים ייחודיים לאוכלוסיות מיוחדות</p>
+              <table class="w-full border-collapse text-sm">
+                <thead>
+                  <tr class="bg-purple-100">
+                    <th class="border border-purple-200 px-3 py-2 text-right font-bold">תלמיד</th>
+                    <th class="border border-purple-200 px-3 py-2 text-right font-bold">סוג מענה</th>
+                    <th class="border border-purple-200 px-3 py-2 text-right font-bold">הערות</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${externalStudents.map(s => {
+                    // שימוש ב-Set להסרת כפילויות
+                    const detailsSet = new Set();
+                    
+                    // מענים חיצוניים מתוך interventionDetails
+                    if (s.interventionDetails) {
+                      s.interventionDetails.forEach(d => {
+                        // אם זה סוג external, השתמש בשם ישירות
+                        if (d.type === 'external') {
+                          detailsSet.add(d.name);
+                        } else if (hasExternalKeyword(d.name) || hasExternalKeyword(d.detail)) {
+                          // אחרת, חלץ רק את החלקים החיצוניים
+                          const parts = extractExternalParts(d.detail || d.name);
+                          parts.forEach(p => detailsSet.add(p.trim()));
+                        }
+                      });
+                    }
+                    
+                    // מענים חיצוניים מתוך learningIntensiveDetails (קלינאית תקשורת וכו')
+                    if (s.learningIntensiveDetails && hasExternalKeyword(s.learningIntensiveDetails)) {
+                      const parts = extractExternalParts(s.learningIntensiveDetails);
+                      parts.forEach(p => detailsSet.add(p.trim()));
+                    }
+                    
+                    // מענים ייחודיים לאוכלוסיות מיוחדות
+                    if (s.specialInterventions) {
+                      detailsSet.add(s.specialInterventions.trim());
+                    }
+                    
+                    // המרה למערך והסרת ערכים ריקים
+                    const detailsList = [...detailsSet].filter(d => d);
+                    const details = detailsList.join(', ') || 'מענה חוץ בית ספרי';
+                    
+                    const key = 'external-' + s.id;
+                    return `
+                      <tr class="hover:bg-purple-50">
+                        <td class="border border-purple-200 px-3 py-2 font-medium">${s.name}</td>
+                        <td class="border border-purple-200 px-3 py-2 text-sm">${details}</td>
+                        <td class="border border-purple-200 px-3 py-2">
+                          <input type="text" placeholder="הערות..." 
+                            onchange="updateResourceInput('${key}', 'notes', this.value)"
+                            value="${(appState.resourceInputs[key] || {}).notes || ''}"
+                            class="w-full text-xs border border-slate-300 rounded px-2 py-1" />
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+              ${renderNotesField('external-services-notes')}
+            </div>
+          `;
+        })()}
+      </div>
+    </div>
+  `;
+}
+
 function renderClassroomPlan() {
   const domains = [
     { key: 'language', name: 'שפה ואוריינות', icon: '📖', scoreKey: 'שפה', type: 'learning', groupedKey: 'learningGroupedLanguage', intensiveKey: 'learningIntensiveLanguage' },
@@ -1431,10 +2359,24 @@ function renderClassroomPlan() {
     { key: 'motor', name: 'תנועתי-חושי-מרחבי', icon: '🏃', scoreKey: 'תנועתי', type: 'emotional' }
   ];
 
+  // אם מוצגת טבלה מסכמת
+  if (appState.showSummaryTable) {
+    return renderSummaryTable(domains);
+  }
+
   // אם לא נבחר תחום, הצג את כפתורי הבחירה
   if (!appState.selectedDomain) {
     return `
-      <div class="animate-fadeIn">
+      <div class="animate-fadeIn space-y-6">
+        <!-- כפתור טבלה מסכמת -->
+        <div class="flex justify-center">
+          <button onclick="toggleSummaryTable()" 
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all flex items-center gap-3">
+            <span class="text-2xl">📊</span>
+            <span>טבלת מענים מסכמת להדפסה</span>
+          </button>
+        </div>
+        
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-100">
           <h3 class="text-2xl font-bold text-slate-900 mb-6">📋 בחרי תחום לצפייה בתוכנית</h3>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -2386,6 +3328,133 @@ function selectStudent(studentId) {
 function selectDomain(domainKey) {
   appState.selectedDomain = domainKey;
   render();
+}
+
+function toggleSummaryTable() {
+  appState.showSummaryTable = !appState.showSummaryTable;
+  render();
+}
+
+function updateResourceInput(key, field, value) {
+  if (!appState.resourceInputs[key]) {
+    appState.resourceInputs[key] = { provider: '', hours: '' };
+  }
+  appState.resourceInputs[key][field] = value;
+}
+
+function printSummaryTable() {
+  const content = document.getElementById('summaryTableContent');
+  if (!content) return;
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="he">
+    <head>
+      <meta charset="UTF-8">
+      <title>טבלת מענים מסכמת - עוגן-פלוס</title>
+      <style>
+        * { font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { padding: 20px; direction: rtl; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: right; font-size: 12px; }
+        th { background: #f3f4f6; font-weight: bold; }
+        h2 { color: #4f46e5; text-align: center; }
+        h3 { color: #1e293b; margin-top: 20px; }
+        .header { background: linear-gradient(to right, #4f46e5, #7c3aed); color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
+        select, input[type="text"] { display: none !important; }
+        .resource-display, .students-display { display: block !important; }
+        .no-print { display: none !important; }
+        @media print { 
+          body { padding: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      ${prepareContentForExport(content)}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  setTimeout(() => printWindow.print(), 500);
+}
+
+function prepareContentForExport(content) {
+  // Clone the content
+  const clone = content.cloneNode(true);
+  
+  // Replace select/input with their values in resource cells
+  clone.querySelectorAll('.resource-cell').forEach(cell => {
+    const key = cell.dataset.key;
+    const saved = appState.resourceInputs[key] || {};
+    const provider = saved.provider === 'אחר' ? (saved.otherProvider || 'אחר') : (saved.provider || '');
+    const hours = saved.hours || '';
+    const display = provider ? provider + (hours ? ' - ' + hours + ' שעות' : '') : '-';
+    
+    // Replace entire cell content with just the display text
+    cell.innerHTML = `<span class="resource-display">${display}</span>`;
+  });
+  
+  // Replace students cells
+  clone.querySelectorAll('.students-cell').forEach(cell => {
+    const key = cell.dataset.key;
+    const saved = appState.resourceInputs[key] || {};
+    const studentsList = cell.querySelector('.students-list');
+    const baseStudentsText = studentsList ? studentsList.textContent : '';
+    const baseStudents = baseStudentsText.split(',').map(s => s.trim()).filter(s => s);
+    
+    // הסרת תלמידים
+    const removedStudents = (saved.removedStudents || '').split(',').map(s => s.trim()).filter(s => s);
+    const filteredStudents = baseStudents.filter(name => !removedStudents.includes(name));
+    
+    // הוספת תלמידים
+    const additionalStudents = (saved.additionalStudents || '').split(',').map(s => s.trim()).filter(s => s);
+    const finalStudents = [...filteredStudents, ...additionalStudents];
+    
+    const display = finalStudents.join(', ') || '-';
+    
+    // Replace entire cell content with just the display text
+    cell.innerHTML = `<span class="students-display">${display}</span>`;
+  });
+  
+  // Replace notes cells
+  clone.querySelectorAll('.notes-cell').forEach(cell => {
+    const key = cell.dataset.key;
+    const saved = appState.resourceInputs[key] || {};
+    const notes = saved.notes || '';
+    
+    // Replace entire cell content
+    if (notes) {
+      cell.innerHTML = `<div><strong>📝 הערות:</strong> ${notes}</div>`;
+    } else {
+      cell.innerHTML = `<span>-</span>`;
+    }
+  });
+  
+  return clone.innerHTML;
+}
+
+function exportToWord() {
+  const content = document.getElementById('summaryTableContent');
+  if (!content) return;
+  
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8"><style>
+      body { direction: rtl; font-family: 'David', 'Segoe UI', sans-serif; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #000; padding: 5px; }
+      th { background: #e5e7eb; }
+    </style></head>
+    <body>${prepareContentForExport(content)}</body>
+    </html>
+  `;
+  
+  const blob = new Blob(['\\ufeff', html], { type: 'application/msword' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'טבלת_מענים_מסכמת.doc';
+  link.click();
 }
 
 function selectStatusSection(section) {
