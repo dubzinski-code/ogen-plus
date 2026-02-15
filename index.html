@@ -1233,15 +1233,28 @@ function processOgenData(rawRows) {
       student.learningIntensiveDetails = detail;
     }
     
-    // בדיקת מענים רגשיים/התנהגותיים/חברתיים
+    // בדיקת מענים רגשיים/התנהגותיים/חברתיים - רק אם יש תוכן רלוונטי
     const emotionalGroupedIdx = columnIndices['מעניםרגשייםקבוצתי'];
     if (emotionalGroupedIdx !== undefined && mainRow[emotionalGroupedIdx] === 'כן') {
-      student.interventions.emotionalGrouped = true;
+      const detail = (detailRow[emotionalGroupedIdx] || '').toLowerCase();
+      // לא לסמן כמענה רגשי קבוצתי אם זה רק תוכניות למחוננים או קשב
+      const isOnlySpecial = (detail.includes('מחונן') || detail.includes('מצטיינים') || detail.includes('קשב')) &&
+                           !detail.includes('רגש') && !detail.includes('חברת') && !detail.includes('התנהג');
+      if (!isOnlySpecial) {
+        student.interventions.emotionalGrouped = true;
+      }
     }
     
     const emotionalIntensiveIdx = columnIndices['מעניםרגשייםאינטנסיבי'];
     if (emotionalIntensiveIdx !== undefined && mainRow[emotionalIntensiveIdx] === 'כן') {
-      student.interventions.emotionalIntensive = true;
+      const detail = (detailRow[emotionalIntensiveIdx] || '').toLowerCase();
+      // לא לסמן כמענה רגשי אינטנסיבי אם זה רק תוכניות למחוננים או קשב
+      const isOnlySpecial = (detail.includes('מחונן') || detail.includes('מצטיינים') || detail.includes('קשב')) &&
+                           !detail.includes('רגש') && !detail.includes('חברת') && !detail.includes('התנהג') &&
+                           !detail.includes('יועצ') && !detail.includes('פסיכולוג') && !detail.includes('טיפול');
+      if (!isOnlySpecial) {
+        student.interventions.emotionalIntensive = true;
+      }
     }
     
     const strengthsIdx = columnIndices['חוזקות'];
@@ -1358,6 +1371,22 @@ function processOgenData(rawRows) {
       if (combinedText.includes('פיזיותרפ')) {
         student.interventions.emotionalIntensiveDetails.externalServices = true;
         student.interventionDetails.push({ type: 'external', name: 'פיזיותרפיה', detail: detailValue });
+      }
+      
+      // זיהוי תוכניות למחוננים ומצטיינים (מניעת כפילויות)
+      if (combinedText.includes('מחונן') || combinedText.includes('מצטיינים')) {
+        const alreadyAdded = student.interventionDetails.some(d => d.name === 'תוכניות ייעודיות לתלמידים מחוננים ומצטיינים');
+        if (!alreadyAdded) {
+          student.interventionDetails.push({ type: 'special', name: 'תוכניות ייעודיות לתלמידים מחוננים ומצטיינים', detail: detailValue });
+        }
+      }
+      
+      // זיהוי תוכניות לקשב (מניעת כפילויות)
+      if ((combinedText.includes('קשב') || combinedText.includes('ריכוז')) && !combinedText.includes('ניהול')) {
+        const alreadyAdded = student.interventionDetails.some(d => d.name === 'תוכניות לקשב וריכוז');
+        if (!alreadyAdded) {
+          student.interventionDetails.push({ type: 'special', name: 'תוכניות לקשב וריכוז', detail: detailValue });
+        }
       }
       
       // בדיקה לפירוט משולב - פיצול מענים
@@ -3077,7 +3106,7 @@ function renderIndividualPlan() {
           // מענים מפורטים מ-interventionDetails
           if (student.interventionDetails && student.interventionDetails.length > 0) {
             student.interventionDetails.forEach(d => {
-              if (d.type === 'external') {
+              if (d.type === 'external' || d.type === 'special') {
                 interventionsList.push(d.name);
               }
             });
