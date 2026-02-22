@@ -48,6 +48,69 @@ const SOURCE_LINKS = {
   'כלים שלובים - גליון 7': {
     he: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/gilayonkelimshluvimmatarot.pdf',
     ar: 'https://meyda.education.gov.il/files/yesodi/hachala/kelimshluvim/gilayonkelimshluvimmatarotaravit.pdf'
+  },
+  'מאפייני תלמידים עם מוגבלויות': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/hahala-hishtalvot/disabilities-students.pdf'
+  },
+  'נתיבים - הוראה מפורשת וישירה': {
+    he: 'https://meyda.education.gov.il/files/Mazkirut_Pedagogit/AgafPituachPedagogi/NetivimHoraaYeshira.pdf'
+  },
+  'אוגדן הכלה - יסודי': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/hahala-hishtalvot/ogdan-yesodi.pdf'
+  },
+  'אוגדן הכלה - על-יסודי': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/hahala-hishtalvot/ogdan-al-yesodi.pdf'
+  },
+  'הוראה ולמידה בקבוצות קטנות': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/small-groups-learning.pdf'
+  },
+  'המלצה לקליטת תלמידים עם צרכים ייחודיים': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/hahala-hishtalvot/student-recommendation1.pdf'
+  },
+  'צומחים מחדש - תוכנית': {
+    he: 'https://meyda.education.gov.il/files/yesodi/irgon_lemida/grow_again.pdf'
+  },
+  'צומחים מחדש - כיתה א': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/growing-again-program1.pdf'
+  },
+  'צומחים מחדש - הערכה': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/growing-again-aaraha.pdf'
+  },
+  'מטקסט לשיעור': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/text-to-lesson.pdf'
+  },
+  'איתי ולידי': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/With-me.pdf'
+  },
+  'קידום שטף קריאה ב-ג': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/kidum-shetef-kriaa-b-c.pdf'
+  },
+  'צומחים מחדש - מפגש ראשון': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/Regrowing-first-meeting.pdf'
+  },
+  'צומחים מחדש - מפגש קריאה': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/Regrowing-first-meeting-reading.pdf'
+  },
+  'פרסונה פלוס - מצגת': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/Persona-plus-presentation.pdf'
+  },
+  'אישי פלוס - מורים': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_habaah_lashon/chativat_bynaym/plus/ppt-teachers-ishi-plus.pdf'
+  },
+  'דיוק מטרות': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_habaah_lashon/chativat_bynaym/plus/dyuk-matarot.pdf'
+  },
+  'תוכנית פדגוגית כיתה א': {
+    he: 'https://meyda.education.gov.il/files/yesodi/ivrit/tcumchim_mehadash/Pedagogical_program_for_grade1.pdf'
+  },
+  'צומחים מחדש - תשפ"ב': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/growing-again-tashpav.pdf'
+  },
+  'צומחים מחדש - כיתות ב-ג': {
+    he: 'https://meyda.education.gov.il/files/Pop/0files/ivrit_hinuch_leshoni/Yesodi/growing-again-2-3g.pdf'
+  },
+  'מפמ"ר עברית תשפ"ו': {
+    he: 'https://meyda.education.gov.il/files/popCharedi/files/HebrewPrimary/mafmar-2026-haredi.pdf'
   }
 };
 
@@ -55,33 +118,33 @@ const PEDAGOGICAL_RECOMMENDATIONS = {
   language: {
     name: 'שפה ואוריינות',
     universal: [
-      { title: 'הוראה מפורשת בקריאה', description: 'הדגימי אסטרטגיית "חיזוי" בקול רם, תרגלי עם הכיתה 3 טקסטים, ואז תרגול עצמאי.', frequency: '3 פעמים בשבוע, 15 דקות', tools: ['כרטיסיות חיזוי', 'טקסטים מדורגים'], udlPrinciple: 'ייצוג מרובה' },
+      { title: 'הוראה מפורשת בקריאה', description: 'הדגימי אסטרטגיית "חיזוי" בקול רם, תרגלי עם הכיתה 3 טקסטים, ואז תרגול עצמאי. שלבים: שיום, הסבר מטרה, הדגמה, תרגול מודרך, תרגול עצמאי.', frequency: '3 פעמים בשבוע, 15 דקות', tools: ['כרטיסיות חיזוי', 'טקסטים מדורגים'], udlPrinciple: 'ייצוג מרובה', source: 'נתיבים - הוראה מפורשת וישירה' },
       { title: 'חיבור לידע קודם', description: 'בתחילת כל שיעור, הפעילי את הידע הקודם באמצעות שיטת CHaZaK: שאלות קצרות, חימום המוח, הכנת הקרקע.', frequency: 'בתחילת כל שיעור, 5 דקות', tools: ['כרטיסי כניסה', 'שוק מושגים'], udlPrinciple: 'ייצוג מרובה', source: 'כלים שלובים - גליון 2' },
       { title: 'בניית סכמות קוגניטיביות', description: 'לפני לימוד סיפור חדש, בני עם התלמידים סכמת "אירוע" - מה צפוי לקרות, מי הדמויות, איפה ומתי.', frequency: 'בכל טקסט חדש', tools: ['כרטיסיות סכמה', 'מפת סיפור'], udlPrinciple: 'ייצוג מרובה', source: 'כלים שלובים - גליון 4' },
       { title: 'ייצוג רב-חושי', description: 'כל טקסט בליווי הקראה (אודיו) + סרטון קצר + מפת חשיבה ויזואלית.', frequency: 'בכל שיעור שפה', tools: ['הקלטות', 'סרטונים', 'מפות מושגים'], udlPrinciple: 'ייצוג מרובה' },
       { title: 'בנק מילים ויזואלי', description: 'תלי על הקיר כרטיסיות עם מילים חדשות + תמונות + משפטי דוגמה.', frequency: 'עדכון שבועי', tools: ['כרטיסיות מילים', 'תמונות'], udlPrinciple: 'מעורבות' },
       { title: 'הוראה מפורשת של אסטרטגיות קריאה', description: 'למדי אסטרטגיות קריאה באופן מפורש: שיום האסטרטגיה, הסבר מטרתה, הדגמה, ותרגול מודרך.', frequency: 'שבועי', tools: ['כרטיסי ניווט', 'פוסטר אסטרטגיות'], udlPrinciple: 'ייצוג מרובה', source: 'כלים שלובים - גליון 5' },
-      { title: 'מודל "מטקסט לשיעור" - ניהול המפגש האורייני', description: 'ניהול כל שיעור שפה בשלושה שלבים: (1) כרטיס כניסה - הפעלת ידע קודם, הנגשה לשונית, עוררות סקרנות; (2) תוך הקריאה - עצירות מתודיות, כרטיס ניווט, מידול קוגניטיבי; (3) כרטיס יציאה - קורפוס מילים, שאלות סיכום, יצירת שאלות עמיתים. המפגשים האורייניים צריכים להיות דיאלוגיים ולזמן קריאה פעילה מנוטרת הבנה.', frequency: 'בכל שיעור שפה', tools: ['כרטיס כניסה', 'כרטיס יציאה', 'כרטיס ניווט'], udlPrinciple: 'ייצוג מרובה' },
+      { title: 'מודל "מטקסט לשיעור" - ניהול המפגש האורייני', description: 'ניהול כל שיעור שפה בשלושה שלבים: (1) כרטיס כניסה - הפעלת ידע קודם, הנגשה לשונית, עוררות סקרנות; (2) תוך הקריאה - עצירות מתודיות, כרטיס ניווט, מידול קוגניטיבי; (3) כרטיס יציאה - קורפוס מילים, שאלות סיכום, יצירת שאלות עמיתים. המפגשים האורייניים צריכים להיות דיאלוגיים ולזמן קריאה פעילה מנוטרת הבנה.', frequency: 'בכל שיעור שפה', tools: ['כרטיס כניסה', 'כרטיס יציאה', 'כרטיס ניווט'], udlPrinciple: 'ייצוג מרובה', source: 'מטקסט לשיעור' },
       { title: 'קריאה דיאלוגית שיתופית בכיתה (כיתות א-ו)', description: 'קריאה קולית שיתופית של ספרי ילדים ונוער עם שיח דיאלוגי. הפרקטיקה מקדמת הבנת הסיפור, מרחיבה עולמות ידע, מעשירה אוצר מילים ומעודדת קריאה לצורך אמיתי. ניתן לרכוש מארזי ספרים.', frequency: 'פעם-פעמיים בשבוע, שזורה בלמידה האוריינית', tools: ['ספרי ילדים ונוער', 'מארזי ספרים', 'יחידות הוראה מאתר "שמחת הקריאה"'], udlPrinciple: 'מעורבות' },
-      { title: 'קידום שטף קריאה לכלל הכיתה (כיתות ב-ו)', description: 'עודדי קריאה בדרכים מגוונות: הקראה קולית, קריאה עצמית, קריאת עמיתים. צרי הזדמנויות תדירות לקריאת טקסטים אותנטיים. שוחחי על אתגרי הכתיב המלא הלא מנוקד. שלבי קריאה חווייתית ומשמעותית, הימנעי מתרגולים טכניים שגורמים שעמום ומרחיקים מאהבת הקריאה.', frequency: 'יומי', tools: ['ספרים', 'כתבות', 'כתב העת "סימניה"', 'הקלטות שמע'], udlPrinciple: 'מעורבות' },
+      { title: 'קידום שטף קריאה לכלל הכיתה (כיתות ב-ו)', description: 'עודדי קריאה בדרכים מגוונות: הקראה קולית, קריאה עצמית, קריאת עמיתים. צרי הזדמנויות תדירות לקריאת טקסטים אותנטיים. שוחחי על אתגרי הכתיב המלא הלא מנוקד. שלבי קריאה חווייתית ומשמעותית, הימנעי מתרגולים טכניים שגורמים שעמום ומרחיקים מאהבת הקריאה.', frequency: 'יומי', tools: ['ספרים', 'כתבות', 'כתב העת "סימניה"', 'הקלטות שמע'], udlPrinciple: 'מעורבות', source: 'קידום שטף קריאה ב-ג' },
       { title: 'כלי בינה מלאכותית לתכנון ולמידה', description: 'שלבי כלי AI לתכנון שיעורים במודל "מטקסט לשיעור" (פרומפטים מובנים), להקראה קולית של טקסטים (אווטאר מבוסס AI), ולהערכת שטף קריאה. כלי AI משביחים את איכות ההוראה ומפחיתים עומס על המורה.', frequency: 'לפי צורך', tools: ['כלי AI לתכנון שיעור', 'אפליקציית Napkin להבנה מטא-טקסטואלית', 'כלי הערכה דיגיטליים'], udlPrinciple: 'פעולה וביטוי' }
     ],
     targeted: [
-      { title: 'קבוצת קריאה מונחית', description: '5-6 תלמידים לפי רמה, תרגול פענוח וביטוי עם ספרים מדורגים.', frequency: '4 פעמים בשבוע, 30 דקות', tools: ['ספרים מדורגים'], udlPrinciple: 'פעולה וביטוי' },
+      { title: 'קבוצת קריאה מונחית', description: '5-6 תלמידים לפי רמה, תרגול פענוח וביטוי עם ספרים מדורגים. ארגון הקבוצה הקטנה: הגדרת מטרות, בחירת חומרים מותאמים, ויצירת מערכת גומלין שמאפשרת ניצול מיטבי.', frequency: '4 פעמים בשבוע, 30 דקות', tools: ['ספרים מדורגים'], udlPrinciple: 'פעולה וביטוי', source: 'הוראה ולמידה בקבוצות קטנות' },
       { title: 'תלמיד מלמד תלמיד', description: 'זיווג תלמיד חזק עם תלמיד מתקשה לקריאת זוגות.', frequency: '3 פעמים בשבוע', tools: ['כרטיסי הנחיה'], udlPrinciple: 'מעורבות' },
       { title: 'כרטיסי משוב לקריאה', description: 'משוב ספציפי על הקריאה: "קראת מדויק X מתוך Y מילים", "שמת לב לנקודות בסוף משפט".', frequency: 'בכל תרגול קריאה', tools: ['כרטיסי משוב', 'משקפיים ורודים'], udlPrinciple: 'מעורבות', source: 'כלים שלובים - גליון 7' },
       { title: 'שוק מושגים להעשרת אוצר מילים', description: 'התלמידים "סוחרים" במילים חדשות - כל אחד מביא מילה ומחליף עם חבר.', frequency: 'שבועי', tools: ['כרטיסי מילים', 'לוח שוק מושגים'], udlPrinciple: 'מעורבות', source: 'כלים שלובים - גליון 2' },
       { title: 'אסטרטגיית פירוק מילים להברות', description: 'כרטיס ניווט אישי לפירוק מילים: 1. הסתכל על המילה 2. מצא את ההברות 3. קרא כל הברה 4. חבר למילה שלמה.', frequency: 'בכל תרגול קריאה', tools: ['כרטיס ניווט', 'צבעי הברות'], udlPrinciple: 'פעולה וביטוי', source: 'כלים שלובים - גליון 5' },
-      { title: 'הוראה בקבוצה קטנה - מודל "איתי ולידי" (צומחים מחדש)', description: 'הוראה מובנית בקבוצה קטנה לפי מודל "איתי ולידי": הוראה מונחית עם המורה + למידה עצמאית/עמיתים בד-בבד. מיועד לכיתות ב-ג ליצירת מנגנוני תמיכה מרובדים בשגרת הלמידה האוריינית.', frequency: '4-5 פעמים בשבוע, שעות אישיות', tools: ['ספרים מדורגים', 'ספרי ילדים', 'חוברות לימוד ייעודיות'], udlPrinciple: 'פעולה וביטוי' },
+      { title: 'הוראה בקבוצה קטנה - מודל "איתי ולידי" (צומחים מחדש)', description: 'הוראה מובנית בקבוצה קטנה לפי מודל "איתי ולידי": הוראה מונחית עם המורה + למידה עצמאית/עמיתים בד-בבד. מיועד לכיתות ב-ג ליצירת מנגנוני תמיכה מרובדים בשגרת הלמידה האוריינית.', frequency: '4-5 פעמים בשבוע, שעות אישיות', tools: ['ספרים מדורגים', 'ספרי ילדים', 'חוברות לימוד ייעודיות'], udlPrinciple: 'פעולה וביטוי', source: 'איתי ולידי' },
       { title: 'קריאה דיאלוגית שיתופית בקבוצה קטנה', description: 'קריאה מונחית של ספרי ילדים ונוער בקבוצה קטנה לצמצום פערים. שיח דיאלוגי על הסיפור, העשרת אוצר מילים, קידום הבנה וכישורים חברתיים-רגשיים.', frequency: '2-3 פעמים בשבוע', tools: ['ספרי ילדים ונוער', 'מסמך "קריאה דיאלוגית - דגשים והנחיות"'], udlPrinciple: 'מעורבות' },
       { title: 'תוכנית "קול קורא!" ו"קריאה מהנה!" לשטף קריאה', description: 'תוכניות ייעודיות לכיתות ב-ו לקידום שטף קריאה: מבדקי שטף, תלקיט טקסטים מסוגים שונים, פעילויות משחקיות ללמידת עמיתים. "השלם החסר" - תלקיט טקסטים מידעיים עם משימת השלמת מילים (קלוז).', frequency: 'לפי תוכנית ייעודית', tools: ['מבדקי שטף קריאה', 'תלקיט טקסטים', 'כתבות "סימניה"', 'כלי AI להערכת שטף (כיתות ב-ו)'], udlPrinciple: 'פעולה וביטוי' }
     ],
     intensive: [
-      { title: 'הוראה פרטנית יומית', description: 'עבודה עם טקסטים ברמה נמוכה, חיזוק הכרת אותיות והברות.', frequency: 'יומי, 30 דקות', tools: ['אותיות מגנטיות'], udlPrinciple: 'ייצוג מרובה' },
+      { title: 'הוראה פרטנית יומית', description: 'עבודה עם טקסטים ברמה נמוכה, חיזוק הכרת אותיות והברות. לתלמידים עם לקות למידה ספציפית: התאמת דרגת הקושי, שימוש בייצוג רב-חושי, והוראה מפורשת של אסטרטגיות פענוח.', frequency: 'יומי, 30 דקות', tools: ['אותיות מגנטיות'], udlPrinciple: 'ייצוג מרובה', source: 'מאפייני תלמידים עם מוגבלויות' },
       { title: 'מודל 6 השלבים לבניית סכמה', description: 'עבודה אישית לפי מודל ד"ר לוי שמעון: 1. בחירת סכמה 2. הגדרה 3. דוגמאות 4. לא-דוגמאות 5. תרגול 6. יישום בהקשרים חדשים.', frequency: 'שבועי', tools: ['כרטיסי סכמה', 'דפי עבודה'], udlPrinciple: 'ייצוג מרובה', source: 'כלים שלובים - גליון 4' },
       { title: 'כרטיסי משוב לשפה לעולים חדשים', description: 'משוב מותאם בשפה פשוטה עם תמיכה ויזואלית, דגש על התקדמות אישית.', frequency: 'יומי', tools: ['כרטיסי משוב מותאמים'], udlPrinciple: 'מעורבות', source: 'כלים שלובים - גליון 7' },
-      { title: 'תוכנית "צומחים מחדש" - כיתה א (רכישת קריאה וכתיבה)', description: 'תוכנית מערכתית לכיתה א לרכישת קריאה וכתיבה עם כלל התלמידים. שלוש זירות משלימות: (1) יישום מודל "איתי ולידי" בשיעורי עברית; (2) יצירת שגרות קריאה ודיאלוגית עם ספרי ילדים; (3) גיבוש הלמידה בשעות אישיות ופרטניות. מתמקדת בהשבחת הלמידה האוריינית ומניעת פערים.', frequency: 'יומי + שעות אישיות', tools: ['ספרים מדורגים', 'ספרי ילדים', 'חוברות לימוד', 'מבדקי שטף'], udlPrinciple: 'ייצוג מרובה' },
-      { title: 'פרופיל אורייני אישי ותכנון ממוקד התערבות', description: 'בניית "פרופיל אורייני" רב-ממדי לפי מודל הערכה דינמי: (1) הערכה "רכה" בהבנת הנקרא; (2) מיפוי הישגים ואיתור קשיים; (3) בירור גורמים: שטף קריאה, הבנה ואוצר מילים, תהליכים קוגניטיביים, קשב ורגש; (4) יצירת פרופיל אישי; (5) תכנון הוראה לפי מטרות אישיות וקבוצתיות.', frequency: 'ניטור שוטף, עדכון בצמתי הערכה', tools: ['מבדקי שטף קריאה', 'כלי הערכה דיגיטליים', 'שאלוני רפלקציה', 'שיח אורייני מורחב'], udlPrinciple: 'פעולה וביטוי' },
+      { title: 'תוכנית "צומחים מחדש" - כיתה א (רכישת קריאה וכתיבה)', description: 'תוכנית מערכתית לכיתה א לרכישת קריאה וכתיבה עם כלל התלמידים. שלוש זירות משלימות: (1) יישום מודל "איתי ולידי" בשיעורי עברית; (2) יצירת שגרות קריאה ודיאלוגית עם ספרי ילדים; (3) גיבוש הלמידה בשעות אישיות ופרטניות. מתמקדת בהשבחת הלמידה האוריינית ומניעת פערים.', frequency: 'יומי + שעות אישיות', tools: ['ספרים מדורגים', 'ספרי ילדים', 'חוברות לימוד', 'מבדקי שטף'], udlPrinciple: 'ייצוג מרובה', source: 'צומחים מחדש - כיתה א' },
+      { title: 'פרופיל אורייני אישי ותכנון ממוקד התערבות', description: 'בניית "פרופיל אורייני" רב-ממדי לפי מודל הערכה דינמי: (1) הערכה "רכה" בהבנת הנקרא; (2) מיפוי הישגים ואיתור קשיים; (3) בירור גורמים: שטף קריאה, הבנה ואוצר מילים, תהליכים קוגניטיביים, קשב ורגש; (4) יצירת פרופיל אישי; (5) תכנון הוראה לפי מטרות אישיות וקבוצתיות.', frequency: 'ניטור שוטף, עדכון בצמתי הערכה', tools: ['מבדקי שטף קריאה', 'כלי הערכה דיגיטליים', 'שאלוני רפלקציה', 'שיח אורייני מורחב'], udlPrinciple: 'פעולה וביטוי', source: 'צומחים מחדש - הערכה' },
       { title: 'עברית כשפה שנייה - הוראה מותאמת', description: 'הוראה לפי מסמך "שפת הבית ושפת בית הספר": הנגשה לשונית, תמיכה ויזואלית, בניית ידע עולם, גישור בין שפת הבית לשפה האקדמית. שימוש בטקסטים מנוקדים, מילון מילים אישי, ושיח מתווך ותומך.', frequency: 'יומי, שילוב בכל שיעורי שפה', tools: ['מסמך "שפת הבית ושפת בית הספר"', 'טקסטים מנוקדים', 'מילון מילים אישי', 'כרטיסי מושגים ויזואליים'], udlPrinciple: 'ייצוג מרובה' }
     ],
     difficulties: {
@@ -1055,7 +1118,8 @@ const ADDITIONAL_PRACTICES = {
 **חשוב לזכור:**
 הוראה מפורשת אינה מנוגדת לקונסטרוקטיביזם — ניתן להרצות באופן שמפעיל חשיבה ומעורר סקרנות. היא כלי בארגז, לצד אסטרטגיות נוספות.`,
     domain: 'כללי',
-    tier: 'אוניברסלי'
+    tier: 'אוניברסלי',
+    source: 'נתיבים - הוראה מפורשת וישירה'
   },
   'תהליך קליטת תלמיד עם צרכים ייחודיים': {
     title: 'תהליך קליטת תלמיד עם צרכים ייחודיים',
@@ -1859,9 +1923,14 @@ function renderMainApp() {
             <h1 class="text-3xl font-black mb-1 flex items-center gap-3">🎯 עוגן-פלוס</h1>
             <p class="text-indigo-200">${appState.students.length} תלמידים | MTSS + UDL</p>
           </div>
-          <button onclick="resetApp()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl flex items-center gap-2">
-            🔄 קובץ חדש
-          </button>
+          <div class="flex items-center gap-3">
+            <button onclick="printPage()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl flex items-center gap-2">
+              🖨️ הדפסה
+            </button>
+            <button onclick="resetApp()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl flex items-center gap-2">
+              🔄 קובץ חדש
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1882,11 +1951,6 @@ function renderMainApp() {
         ${tabContent}
       </div>
 
-      <div class="fixed bottom-6 left-6 no-print">
-        <button onclick="printPage()" class="bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-5 rounded-xl shadow-xl flex items-center gap-2 border border-slate-200">
-          🖨️ הדפסה
-        </button>
-      </div>
     </div>
   `;
 }
@@ -3081,7 +3145,6 @@ function renderTier(title, tier, recommendations, domainKey, studentsInTier) {
                 <div class="flex items-center gap-3">
                   <span>💡</span>
                   <span class="font-bold text-slate-900">${rec.title}</span>
-                  ${rec.source ? '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-medium">כלים שלובים</span>' : ''}
                 </div>
                 <span>${isExpanded ? '▲' : '▼'}</span>
               </button>
@@ -3103,14 +3166,14 @@ function renderTier(title, tier, recommendations, domainKey, studentsInTier) {
                   ` : ''}
                   ${sourceLinks ? `
                     <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-200">
-                      <p class="text-xs font-bold text-emerald-700 mb-2">📥 הורדת הגליון:</p>
+                      <p class="text-xs font-bold text-emerald-700 mb-2">📥 הורדת המסמך:</p>
                       <div class="flex flex-wrap gap-2">
                         <a href="${sourceLinks.he}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
-                          עברית
+                          ${sourceLinks.ar ? 'עברית' : 'צפייה במסמך'}
                         </a>
-                        <a href="${sourceLinks.ar}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
+                        ${sourceLinks.ar ? `<a href="${sourceLinks.ar}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">
                           ערבית
-                        </a>
+                        </a>` : ''}
                       </div>
                     </div>
                   ` : ''}
@@ -3194,7 +3257,7 @@ function renderExplicitTeaching() {
     .replace(/\n/g, '<br>');
 
   html += '<div class="bg-white/70 rounded-xl border border-indigo-200 overflow-hidden">';
-  html += '<button onclick="toggleRec(\\\'' + key + '\'\\\')" class="w-full p-4 flex items-center justify-between hover:bg-indigo-50 text-right">';
+  html += '<button onclick="toggleRec(\'' + key + '\')" class="w-full p-4 flex items-center justify-between hover:bg-indigo-50 text-right">';
   html += '<div class="flex items-center gap-3">';
   html += '<span>📖</span>';
   html += '<span class="font-bold text-slate-900">' + practice.title + '</span>';
@@ -3208,8 +3271,18 @@ function renderExplicitTeaching() {
     html += '<div class="flex flex-wrap gap-2">';
     html += '<span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-medium">📂 ' + practice.domain + '</span>';
     html += '<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">🎯 ' + practice.tier + '</span>';
+    if (practice.source) html += '<span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-medium">📚 ' + practice.source + '</span>';
     html += '</div>';
     html += '<div class="bg-slate-50 rounded-lg p-4 text-sm text-slate-700 leading-relaxed">' + formattedDetails + '</div>';
+    if (practice.source && SOURCE_LINKS[practice.source]) {
+      const sLinks = SOURCE_LINKS[practice.source];
+      html += '<div class="bg-emerald-50 rounded-lg p-3 border border-emerald-200">';
+      html += '<p class="text-xs font-bold text-emerald-700 mb-2">📥 הורדת המסמך:</p>';
+      html += '<div class="flex flex-wrap gap-2">';
+      html += '<a href="' + sLinks.he + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">' + (sLinks.ar ? 'עברית' : 'צפייה במסמך') + '</a>';
+      if (sLinks.ar) html += '<a href="' + sLinks.ar + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors inline-flex items-center gap-1">ערבית</a>';
+      html += '</div></div>';
+    }
     html += '</div>';
   }
   html += '</div>';
@@ -4009,7 +4082,7 @@ function formatBotResponse(text) {
 // פונקציה להוספת קישורים לתשובות שמזכירות גליונות כלים שלובים
 function addSourceLinksToAnswer(answer) {
   // בדיקה אם התשובה כבר מכילה קישורים
-  if (answer.includes('📥 **הורדת הגליון:**') || answer.includes('[עברית]')) {
+  if (answer.includes('📥 **הורדת המסמך:**') || answer.includes('📥 **הורדת הגליון:**') || answer.includes('[עברית]')) {
     return answer;
   }
   
@@ -4021,7 +4094,8 @@ function addSourceLinksToAnswer(answer) {
     const links = SOURCE_LINKS[sourceKey];
     
     if (links) {
-      answer += `\n\n📥 **הורדת הגליון:**\n• [עברית](${links.he})\n• [ערבית](${links.ar})`;
+      answer += `\n\n📥 **הורדת המסמך:**\n• [עברית](${links.he})`;
+      if (links.ar) answer += `\n• [ערבית](${links.ar})`;
     }
   }
   return answer;
@@ -4210,9 +4284,9 @@ function generateAllRecsQuestions() {
           // הוספת קישורים להורדה
           const sourceLinks = SOURCE_LINKS[rec.source];
           if (sourceLinks) {
-            answer += `\n📥 **הורדת הגליון:**\n`;
+            answer += `\n📥 **הורדת המסמך:**\n`;
             answer += `• [עברית](${sourceLinks.he})\n`;
-            answer += `• [ערבית](${sourceLinks.ar})\n`;
+            if (sourceLinks.ar) answer += `• [ערבית](${sourceLinks.ar})\n`;
           }
         }
         
@@ -4427,9 +4501,9 @@ function searchPedagogicalRecommendations(searchText) {
         // הוספת קישורים להורדה
         const sourceLinks = SOURCE_LINKS[rec.source];
         if (sourceLinks) {
-          response += `\n📥 **הורדת הגליון:**\n`;
+          response += `\n📥 **הורדת המסמך:**\n`;
           response += `• [עברית](${sourceLinks.he})\n`;
-          response += `• [ערבית](${sourceLinks.ar})\n`;
+          if (sourceLinks.ar) response += `• [ערבית](${sourceLinks.ar})\n`;
         }
       }
       
