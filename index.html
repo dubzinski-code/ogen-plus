@@ -2333,7 +2333,7 @@ let appState = {
   resourceInputs: {},
   expandedRecs: {},
   notes: {},
-  chatMessages: [{ role: 'assistant', content: 'שלום! 👋\n\nאני העוזר הפדגוגי שלך. אני כאן לעזור לך עם:\n• תמיכה ממוקדת בתלמידים\n• שיח עם הורים\n• עבודה עם צוות בית הספר\n• הסברי מונחים פדגוגיים\n• פתרון בעיות בזמן אמת\n\n**בחרי קטגוריה למעלה** או כתבי שאלה חופשית.' }],
+  chatMessages: [{ role: 'assistant', content: 'שלום! 👋\n\nאני העוזר הפדגוגי שלך. אני כאן לעזור לך עם:\n• תמיכה ממוקדת בתלמידים\n• שיח עם הורים\n• עבודה עם צוות בית הספר\n• הסברי מונחים פדגוגיים\n• פתרון בעיות בזמן אמת\n\n**בחרו קטגוריה למעלה** או כתבו שאלה חופשית.' }],
   chatInput: '',
   selectedCategory: null
 };
@@ -2939,7 +2939,7 @@ function renderSummaryTable(domains) {
         ${existingResource ? `<div class="text-xs text-slate-500 mb-1">מהעוגן: ${existingResource}</div>` : ''}
         <select onchange="updateResourceInput('${key}', 'provider', this.value); this.nextElementSibling.style.display = this.value === 'אחר' ? 'block' : 'none';" 
           class="resource-select w-full text-xs border border-slate-300 rounded px-2 py-1 bg-white">
-          <option value="">בחרי גורם...</option>
+          <option value="">בחרו גורם...</option>
           ${resourceOptions.map(opt => `<option value="${opt}" ${saved.provider === opt ? 'selected' : ''}>${opt}</option>`).join('')}
         </select>
         <input type="text" placeholder="פרטי גורם אחר" value="${saved.otherProvider || ''}"
@@ -3667,7 +3667,7 @@ function renderSummaryTable(domains) {
   `;
   } catch(e) {
     console.error('Error in renderSummaryTable:', e);
-    return '<div class="bg-red-50 p-6 rounded-xl text-red-700"><h3 class="font-bold mb-2">⚠️ שגיאה בטעינת טבלת המענים</h3><p>אנא נסי לרענן את הדף. אם הבעיה חוזרת, פני לתמיכה.</p></div>';
+    return '<div class="bg-red-50 p-6 rounded-xl text-red-700"><h3 class="font-bold mb-2">⚠️ שגיאה בטעינת טבלת המענים</h3><p>אנא נסו לרענן את הדף. אם הבעיה חוזרת, פנו לתמיכה.</p></div>';
   }
 }
 
@@ -3705,7 +3705,7 @@ function renderClassroomPlan() {
         </div>
         
         <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-100">
-          <h3 class="text-2xl font-bold text-slate-900 mb-6">📋 בחרי תחום לצפייה בתוכנית</h3>
+          <h3 class="text-2xl font-bold text-slate-900 mb-6">📋 בחרו תחום לצפייה בתוכנית</h3>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             ${domains.map(domain => {
               const recs = PEDAGOGICAL_RECOMMENDATIONS[domain.key];
@@ -4420,7 +4420,7 @@ function renderIndividualPlan() {
   if (!appState.selectedStudent) {
     return `
       <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-100 animate-fadeIn">
-        <h3 class="text-2xl font-bold text-slate-900 mb-6">📋 בחרי תלמיד/ה</h3>
+        <h3 class="text-2xl font-bold text-slate-900 mb-6">📋 בחרו תלמיד/ה</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           ${appState.students.map(s => {
             // ספירת תחומים לפי רמה
@@ -4807,7 +4807,7 @@ function renderChat() {
     <div class="bg-white rounded-2xl shadow-lg border border-slate-100 flex flex-col animate-fadeIn">
       <div class="p-6 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
         <h3 class="text-2xl font-black text-slate-900">💬 עוזר פדגוגי</h3>
-        <p class="text-slate-600 mt-1">בחרי קטגוריה לצפייה בשאלות, או כתבי שאלה חופשית</p>
+        <p class="text-slate-600 mt-1">בחרו קטגוריה לצפייה בשאלות, או כתבו שאלה חופשית</p>
       </div>
       
       <!-- קטגוריות -->
@@ -4847,7 +4847,7 @@ function renderChat() {
         </div>
       ` : `
         <div class="p-6 bg-gradient-to-b from-blue-50 to-white text-center">
-          <p class="text-slate-600">👆 בחרי קטגוריה למעלה לצפייה ב-20 השאלות בכל נושא</p>
+          <p class="text-slate-600">👆 בחרו קטגוריה למעלה לצפייה בשאלות הרלוונטיות לכל נושא לצורך הרחבה והסבר נוסף</p>
         </div>
       `}
       
@@ -4866,7 +4866,7 @@ function renderChat() {
       <div class="p-4 border-t border-slate-200 bg-slate-50">
         <div class="flex gap-3">
           <input type="text" id="chatInput" onkeypress="handleChatKey(event)" 
-            placeholder="או כתבי שאלה חופשית..."
+            placeholder="או כתבו שאלה חופשית..."
             class="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
           <button onclick="sendChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
             שלחי
@@ -5216,7 +5216,7 @@ function generateResponse(lower, originalMessage) {
   }
   
   // תשובת ברירת מחדל
-  return `לא מצאתי תשובה ספציפית לשאלה שלך על "${cleanMessage}".\n\n**💡 הצעות:**\n• נסי לשאול בצורה יותר ספציפית, למשל: "מה זה כרטיס ניווט?"\n• בחרי קטגוריה למעלה לצפייה בשאלות מוכנות\n• בדקי בתוכנית הכיתתית את ההמלצות המלאות`;
+  return `לא מצאתי תשובה ספציפית לשאלה שלכם על "${cleanMessage}".\n\n**💡 הצעות:**\n• נסו לשאול בצורה יותר ספציפית, למשל: "מה זה כרטיס ניווט?"\n• בחרו קטגוריה למעלה לצפייה בשאלות מוכנות\n• בדקו בתוכנית הכיתתית את ההמלצות המלאות`;
 }
 
 // פונקציה לחיפוש בהמלצות הפדגוגיות
@@ -5410,7 +5410,7 @@ function resetApp() {
     selectedStudent: null,
     expandedRecs: {},
     notes: {},
-    chatMessages: [{ role: 'assistant', content: 'שלום! 👋\n\nאני העוזר הפדגוגי שלך. אני כאן לעזור לך עם:\n• תמיכה ממוקדת בתלמידים\n• שיח עם הורים\n• עבודה עם צוות בית הספר\n• הסברי מונחים פדגוגיים\n• פתרון בעיות בזמן אמת\n\n**בחרי קטגוריה למעלה** או כתבי שאלה חופשית.' }],
+    chatMessages: [{ role: 'assistant', content: 'שלום! 👋\n\nאני העוזר הפדגוגי שלך. אני כאן לעזור לך עם:\n• תמיכה ממוקדת בתלמידים\n• שיח עם הורים\n• עבודה עם צוות בית הספר\n• הסברי מונחים פדגוגיים\n• פתרון בעיות בזמן אמת\n\n**בחרו קטגוריה למעלה** או כתבו שאלה חופשית.' }],
     chatInput: '',
     selectedCategory: null
   };
