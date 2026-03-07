@@ -3927,9 +3927,9 @@ function renderSummaryTable(domains) {
         <div class="border-b border-slate-200 bg-gradient-to-r from-sky-50 to-cyan-50">
           <div onclick="toggleSection('sec-remote')" class="p-4 px-6 cursor-pointer hover:bg-slate-100/50 flex items-center justify-between transition-colors">
             <h3 class="text-lg font-bold text-slate-800">🖥️ למידה מרחוק — סינכרוני וא-סינכרוני</h3>
-            <span id="arrow-sec-remote" class="text-slate-400 text-xl">${getSectionArrow('sec-remote')}</span>
+            <span id="arrow-sec-remote" class="text-slate-400 text-xl">▶</span>
           </div>
-          <div id="sec-remote" style="${getSectionDisplay('sec-remote')}">
+          <div id="sec-remote" style="display:none">
             ${renderRemoteLearningSection(students)}
 
             <div class="text-center mt-4 mb-2">
@@ -3940,9 +3940,9 @@ function renderSummaryTable(domains) {
         <div class="border-b border-slate-200 ">
           <div onclick="toggleSection('sec-learning')" class="p-4 px-6 cursor-pointer hover:bg-slate-100/50 flex items-center justify-between transition-colors">
             <h3 class="text-lg font-bold text-slate-800">📚 מענים לימודיים</h3>
-            <span id="arrow-sec-learning" class="text-slate-400 text-xl">${getSectionArrow('sec-learning')}</span>
+            <span id="arrow-sec-learning" class="text-slate-400 text-xl">▶</span>
           </div>
-          <div id="sec-learning" style="${getSectionDisplay('sec-learning')}">
+          <div id="sec-learning" style="display:none">
         <!-- רובד אוניברסלי לימודי - כלל הכיתה -->
         ${(() => {
           // איסוף תלמידים עם מענים אוניברסליים לימודיים
@@ -4015,9 +4015,9 @@ function renderSummaryTable(domains) {
         <div class="border-b border-slate-200 ">
           <div onclick="toggleSection('sec-emotional')" class="p-4 px-6 cursor-pointer hover:bg-slate-100/50 flex items-center justify-between transition-colors">
             <h3 class="text-lg font-bold text-slate-800">💚 מענים רגשיים/חברתיים/התנהגותיים</h3>
-            <span id="arrow-sec-emotional" class="text-slate-400 text-xl">${getSectionArrow('sec-emotional')}</span>
+            <span id="arrow-sec-emotional" class="text-slate-400 text-xl">▶</span>
           </div>
-          <div id="sec-emotional" style="${getSectionDisplay('sec-emotional')}">
+          <div id="sec-emotional" style="display:none">
         <!-- רובד אוניברסלי רגשי-התנהגותי-חברתי - כלל הכיתה -->
         <div class="p-6 border-b border-slate-200">
           <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -4232,9 +4232,9 @@ function renderSummaryTable(domains) {
         <div class="border-b border-slate-200">
           <div onclick="toggleSection('sec-gifted')" class="p-4 px-6 cursor-pointer hover:bg-slate-100/50 flex items-center justify-between transition-colors">
             <h3 class="text-lg font-bold text-slate-800">🎓 מענים למחוננים ומצטיינים</h3>
-            <span id="arrow-sec-gifted" class="text-slate-400 text-xl">${getSectionArrow('sec-gifted')}</span>
+            <span id="arrow-sec-gifted" class="text-slate-400 text-xl">▶</span>
           </div>
-          <div id="sec-gifted" style="${getSectionDisplay('sec-gifted')}">
+          <div id="sec-gifted" style="display:none">
         <!-- רובד אוניברסלי — מחוננים ומצטיינים -->
         ${(() => {
           const giftedStudents = students.filter(s => {
@@ -6410,6 +6410,13 @@ function selectDomain(domainKey) {
 
 function toggleSummaryTable() {
   appState.showSummaryTable = !appState.showSummaryTable;
+  // סגירת כל sections בכל פתיחה מחדש של הטבלה
+  if (appState.showSummaryTable) {
+    if (!appState.openSections) appState.openSections = {};
+    ['sec-remote', 'sec-learning', 'sec-emotional', 'sec-gifted'].forEach(id => {
+      appState.openSections[id] = false;
+    });
+  }
   render();
 }
 
