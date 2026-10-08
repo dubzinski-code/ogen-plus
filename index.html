@@ -3689,7 +3689,7 @@ function renderIndividualPlan() {
           ${Object.entries(student.scores).map(([domain, score]) => `
             <div class="rounded-xl p-3 text-center ${score === 'מתקדם' ? 'bg-emerald-100 text-emerald-800' : score === 'תקין' ? 'bg-blue-100 text-blue-800' : score === 'מתקשה' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
               <div class="text-xs font-medium opacity-70">${domain}</div>
-              <div class="font-bold">${score}</div>
+              <div class="font-bold">${score === 'תקין' ? 'בהתאם למצופה' : score}</div>
             </div>
           `).join('')}
         </div>
